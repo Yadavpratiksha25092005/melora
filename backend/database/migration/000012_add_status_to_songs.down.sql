@@ -1,0 +1,2 @@
+ALTER TABLE songs DROP COLUMN IF EXISTS status;
+ALTER TABLE songs DROP COLUMN IF EXISTS published_at;

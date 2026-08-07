@@ -1,0 +1,1 @@
+ALTER TABLE artists ADD COLUMN verified BOOLEAN NOT NULL DEFAULT false;
