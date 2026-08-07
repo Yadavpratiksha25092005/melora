@@ -15,16 +15,16 @@ import 'package:Melora/providers/followed_shows_provider.dart';
 /// a native player — no WebView, no YouTube referrer/origin checks, so
 /// it isn't affected by the YouTube embed issues.
 /// ---------------------------------------------------------------------
-class PodcastFilePlayerScreen extends ConsumerStatefulWidget {
+class PodcastFilePlayerScreen extends StatefulWidget {
   const PodcastFilePlayerScreen({super.key, required this.episode});
 
   final PodcastEpisode episode;
 
   @override
-  ConsumerState<PodcastFilePlayerScreen> createState() => _PodcastFilePlayerScreenState();
+  State<PodcastFilePlayerScreen> createState() => _PodcastFilePlayerScreenState();
 }
 
-class _PodcastFilePlayerScreenState extends ConsumerState<PodcastFilePlayerScreen> {
+class _PodcastFilePlayerScreenState extends State<PodcastFilePlayerScreen> {
   late final VideoPlayerController _controller;
   bool _ready = false;
   String? _error;
@@ -66,7 +66,7 @@ class _PodcastFilePlayerScreenState extends ConsumerState<PodcastFilePlayerScree
   }
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     final episode = widget.episode;
 
     return Scaffold(
@@ -184,7 +184,7 @@ class _PodcastFilePlayerScreenState extends ConsumerState<PodcastFilePlayerScree
                           ),
                         ),
                         const SizedBox(width: 12),
-                        _ShowFollowButton(showTitle: episode.showTitle),
+                        _FollowButton(showTitle: episode.showTitle),
                       ],
                     ),
                     if (episode.chapters.isNotEmpty) ...[
@@ -315,37 +315,31 @@ class _PodcastFilePlayerScreenState extends ConsumerState<PodcastFilePlayerScree
   }
 }
 
-/// Follow / Following pill for a podcast show — same pattern and
-/// provider style as the artist Follow button, keyed by show title.
-class _ShowFollowButton extends ConsumerWidget {
-  const _ShowFollowButton({required this.showTitle});
+/// Follow/Following toggle — wired to followedShowsProvider so it stays
+/// in sync with FollowingShowsScreen (Home → Podcasts → Following).
+class _FollowButton extends ConsumerWidget {
+  const _FollowButton({required this.showTitle});
 
   final String showTitle;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final isFollowing = ref.watch(
-      followedShowsProvider.select((set) => set.contains(showTitle)),
-    );
+    final following = ref.watch(followedShowsProvider).contains(showTitle);
 
     return OutlinedButton(
       onPressed: () {
         final notifier = ref.read(followedShowsProvider.notifier);
-        if (isFollowing) {
-          notifier.unfollow(showTitle);
-        } else {
-          notifier.follow(showTitle);
-        }
+        following ? notifier.unfollow(showTitle) : notifier.follow(showTitle);
       },
       style: OutlinedButton.styleFrom(
-        foregroundColor: isFollowing ? Colors.black : Colors.white,
-        backgroundColor: isFollowing ? Colors.white : Colors.transparent,
+        foregroundColor: following ? Colors.black : Colors.white,
+        backgroundColor: following ? Colors.white : Colors.transparent,
         side: const BorderSide(color: Colors.white38),
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       ),
       child: Text(
-        isFollowing ? 'Following' : 'Follow',
+        following ? 'Following' : 'Follow',
         style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w700),
       ),
     );

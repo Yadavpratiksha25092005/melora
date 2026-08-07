@@ -12,4 +12,6 @@ class ApiEndpoints {
   static const String search = "/search";
   static const String favorites = "/favorites";
   static const String history = "/history";
+
+  static const String userProfile = "/users/profile";
 }

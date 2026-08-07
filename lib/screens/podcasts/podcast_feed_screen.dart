@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
 import 'package:Melora/core/network/dummy_data_source.dart';
 import 'package:Melora/core/theme/app_colors.dart';
 import 'package:Melora/models/podcast.dart';
-import 'package:Melora/providers/followed_shows_provider.dart';
 import 'package:Melora/screens/podcasts/podcast_audio_player_screen.dart';
 import 'package:Melora/screens/podcasts/podcast_file_player_screen.dart';
 import 'package:Melora/screens/podcasts/podcast_video_player_screen.dart';
@@ -83,51 +81,6 @@ class PodcastFeedScreen extends StatelessWidget {
   }
 }
 
-/// Follow / Following pill for a podcast show — mirrors the artist
-/// Follow button, backed by followedShowsProvider (keyed by show title).
-class _ShowFollowButton extends ConsumerWidget {
-  final String showTitle;
-  const _ShowFollowButton({required this.showTitle});
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final isFollowing = ref.watch(
-      followedShowsProvider.select((set) => set.contains(showTitle)),
-    );
-
-    return GestureDetector(
-      onTap: () {
-        final notifier = ref.read(followedShowsProvider.notifier);
-        if (isFollowing) {
-          notifier.unfollow(showTitle);
-        } else {
-          notifier.follow(showTitle);
-        }
-      },
-      child: Container(
-        height: 30,
-        padding: const EdgeInsets.symmetric(horizontal: 14),
-        alignment: Alignment.center,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(
-            color: isFollowing ? Colors.white24 : Colors.white54,
-          ),
-          color: isFollowing ? Colors.white.withValues(alpha: 0.08) : Colors.transparent,
-        ),
-        child: Text(
-          isFollowing ? 'Following' : 'Follow',
-          style: const TextStyle(
-            color: Colors.white,
-            fontSize: 12,
-            fontWeight: FontWeight.w700,
-          ),
-        ),
-      ),
-    );
-  }
-}
-
 class _EpisodeCard extends StatelessWidget {
   const _EpisodeCard({required this.episode, required this.onTap});
 
@@ -150,15 +103,24 @@ class _EpisodeCard extends StatelessWidget {
                 child: Stack(
                   fit: StackFit.expand,
                   children: [
-                    CachedNetworkImage(
-                      imageUrl: episode.coverUrl,
-                      fit: BoxFit.cover,
-                      placeholder: (_, __) => Container(color: Colors.white.withValues(alpha: 0.06)),
-                      errorWidget: (_, __, ___) => Container(
-                        color: Colors.white.withValues(alpha: 0.06),
-                        child: const Icon(Icons.podcasts_rounded, color: Colors.white24, size: 36),
-                      ),
-                    ),
+                    episode.coverUrl.startsWith('http')
+                        ? CachedNetworkImage(
+                            imageUrl: episode.coverUrl,
+                            fit: BoxFit.cover,
+                            placeholder: (_, __) => Container(color: Colors.white.withValues(alpha: 0.06)),
+                            errorWidget: (_, __, ___) => Container(
+                              color: Colors.white.withValues(alpha: 0.06),
+                              child: const Icon(Icons.podcasts_rounded, color: Colors.white24, size: 36),
+                            ),
+                          )
+                        : Image.asset(
+                            episode.coverUrl,
+                            fit: BoxFit.cover,
+                            errorBuilder: (_, __, ___) => Container(
+                              color: Colors.white.withValues(alpha: 0.06),
+                              child: const Icon(Icons.podcasts_rounded, color: Colors.white24, size: 36),
+                            ),
+                          ),
                     Positioned(
                       left: 8,
                       top: 8,
@@ -213,7 +175,7 @@ class _EpisodeCard extends StatelessWidget {
               overflow: TextOverflow.ellipsis,
               style: const TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.w700, height: 1.3),
             ),
-      const SizedBox(height: 4),
+            const SizedBox(height: 4),
             Text(
               episode.showTitle,
               maxLines: 1,

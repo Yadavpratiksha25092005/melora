@@ -87,6 +87,41 @@ class AuthService {
     return User.fromJson(result['user']);
   }
 
+  /// PUT /users/profile — backend only accepts/stores `name` and
+  /// `avatar_url` (see internal/user/dto.go: UpdateProfileRequest), and
+  /// returns {id, name, phone_number, avatar_url} (no email field, since
+  /// this backend's user model is phone/OTP-based).
+  Future<User> updateProfile({String? username, String? avatarUrl}) async {
+    if (AppConstants.useDummyData) {
+      await DummyDataSource.simulateDelay();
+      final userJson = await DummyDataSource.user();
+      final updated = {
+        ...userJson,
+        if (username != null) 'username': username,
+        if (avatarUrl != null) 'avatar_url': avatarUrl,
+      };
+      return User.fromJson(updated);
+    }
+
+    final result = await _client.request<Map<String, dynamic>>(
+      () => _client.dio.put(
+        ApiEndpoints.userProfile,
+        data: {
+          'name': username ?? '',
+          'avatar_url': avatarUrl ?? '',
+        },
+      ),
+      (data) => data as Map<String, dynamic>,
+    );
+    return User(
+      id: result['id'] as String,
+      email: '',
+      username: result['name'] as String? ?? username ?? '',
+      avatarUrl: result['avatar_url'] as String?,
+      phone: result['phone_number'] as String?,
+    );
+  }
+
   Future<bool> isLoggedIn() async {
     try {
       final token = await _storage.read(key: AppConstants.tokenKey);

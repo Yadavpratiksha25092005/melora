@@ -73,11 +73,13 @@ flutter:
     - assets/images/
     - assets/images/artists/
     - assets/images/songs/
+    - assets/images/podcasts/
     - assets/icons/
     - assets/fonts/
     - assets/animations/
     - assets/dummy/
     - assets/audio/
+    - assets/videos/
 
 # Run `flutter pub run flutter_launcher_icons` to regenerate app launcher
 # icons on Android/iOS from the Melora logo mark.

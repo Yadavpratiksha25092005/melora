@@ -94,6 +94,23 @@ class AuthNotifier extends StateNotifier<AuthState> {
     state = state.copyWith(otpSent: false, clearError: true);
   }
 
+  /// Updates the signed-in user's profile via the backend
+  /// (PUT /users/profile — see internal/user in the Go backend).
+  Future<bool> updateProfile({String? username, String? avatarUrl}) async {
+    state = state.copyWith(isLoading: true, clearError: true);
+    try {
+      final updated = await _repo.updateProfile(username: username, avatarUrl: avatarUrl);
+      state = state.copyWith(user: updated, isLoading: false);
+      return true;
+    } on ApiException catch (e) {
+      state = state.copyWith(isLoading: false, error: e.message);
+      return false;
+    } catch (e) {
+      state = state.copyWith(isLoading: false, error: 'Something went wrong');
+      return false;
+    }
+  }
+
   Future<void> logout() async {
     await _repo.logout();
     state = const AuthState();

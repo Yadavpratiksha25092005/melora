@@ -19,5 +19,8 @@ class AuthRepository {
   Future<User> verifyOtp({required String phone, required String otp}) =>
       _service.verifyOtp(phone: phone, otp: otp);
 
+  Future<User> updateProfile({String? username, String? avatarUrl}) =>
+      _service.updateProfile(username: username, avatarUrl: avatarUrl);
+
   Future<bool> isLoggedIn() => _service.isLoggedIn();
 }

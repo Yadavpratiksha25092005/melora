@@ -1,121 +1,86 @@
 import '../../models/podcast.dart';
 
-/// Dummy podcast catalog powering the Search → Podcasts feed. Swap this
-/// for a real `GET /shows` + `GET /episodes` call once the backend
-/// `episodes` table (with its `video_url TEXT` column) is wired up —
-/// nothing else in the UI needs to change, since it only depends on the
-/// [PodcastEpisode] shape.
+/// Podcast catalog powering the Search → Podcasts feed.
 const List<PodcastEpisode> dummyPodcastFeed = [
-  // Direct-hosted .mp4 files — play via the built-in video_player, no
-  // YouTube/WebView embedding involved at all, so there's nothing for
-  // YouTube's referrer/embedding restrictions to block.
-  //
-  // NOTE: the old `gtv-videos-bucket` (Google's ancient GCS demo bucket)
-  // now returns AccessDenied for anonymous reads — Google locked it down,
-  // it's not a bug in this app. Swapped to sources that are verified
-  // public as of Aug 2026: Flutter's own official docs asset repo, and a
-  // well-known open Big Buck Bunny test-media repo. Swap these for your
-  // own hosted episode files whenever you have them (S3, Firebase, your
-  // backend) — `coverUrl` uses picsum.photos (seeded, so each id always
-  // gets the same stable placeholder image) until you have real posters.
   PodcastEpisode(
     id: 'ep_1',
-    title: 'Psychiatrist Explains: Psychology Behind Cheating & choosing Wrong Partner',
-    showTitle: "Psychiatrist's Explains",
-    coverUrl: 'https://picsum.photos/seed/ep_1/400/400',
-    durationLabel: '1:29:21',
-    videoUrl: 'raw.githubusercontent.com/chthomos/video-media-samples/master/big-buck-bunny-480p-30sec.mp4',
+    title: 'Episode 1',
+    showTitle: 'The Samay Podcast',
+    coverUrl: 'assets/images/podcasts/episode_1.png',
+    durationLabel: '1:52',
+    videoUrl: 'asset:assets/videos/episode_1.mp4',
+    showHost: 'Samay Raina & Ravi Gupta',
+    showDescription: 'Real conversations and stories, straight from your own recordings.',
+    episodeDescription: 'Samay Raina & Ravi Gupta Most Funniest 😂 Podcast Ever is not just a podcast episode—it\'s a comedy event you absolutely cannot miss.\n'
+        'From the very first minute, Samay Raina & Ravi Gupta Most Funniest 😂 Podcast Ever sets the tone with non-stop laughs, quick-witted jokes, and that iconic desi humour.\n'
+        'The way Samay kicks things off in Samay Raina & Ravi Gupta Most Funniest 😂 Podcast Ever with his signature sarcasm is enough to leave you in splits.\n'
+        'Ravi Gupta brings his unbeatable storytelling skills to Samay Raina & Ravi Gupta Most Funniest 😂 Podcast Ever, turning even the most random life moments into comedy gold.\n'
+        'You\'ll find yourself replaying moments from Samay Raina & Ravi Gupta Most Funniest 😂 Podcast Ever just to laugh all over again.\n'
+        'Every joke in Samay Raina & Ravi Gupta Most Funniest 😂 Podcast Ever lands harder than the last, proving their unbeatable comic chemistry.\n'
+        'There are no dull moments in Samay Raina & Ravi Gupta Most Funniest 😂 Podcast Ever—just punchlines, roasts, and pure madness.\n'
+        'Samay Raina & Ravi Gupta Most Funniest 😂 Podcast Ever is like having front-row seats to the funniest stand-up show, but from your couch.\n'
+        'The improv-style banter in Samay Raina & Ravi Gupta Most Funniest 😂 Podcast Ever feels so natural, you\'ll forget it\'s even a podcast.',
+    chapters: [
+      PodcastChapter(title: 'Intro', durationLabel: '0:00'),
+      PodcastChapter(title: 'Main Discussion', durationLabel: '1:00'),
+    ],
   ),
   PodcastEpisode(
     id: 'ep_2',
-    title: 'Building in Public: Lessons From Shipping Fast',
-    showTitle: 'Tech Talk Podcast',
-    coverUrl: 'https://picsum.photos/seed/ep_2/400/400',
-    durationLabel: '24:24',
-    videoUrl: 'flutter.github.io/assets-for-api-docs/assets/videos/butterfly.mp4',
+    title: 'Episode 2',
+    showTitle: 'Khatron Ke Khiladi 15',
+    coverUrl: 'assets/images/podcasts/episode_2.png',
+    durationLabel: '0:48',
+    videoUrl: 'asset:assets/videos/episode_2.mp4',
+    showHost: 'Bharti Singh',
+    showDescription: 'Real conversations and stories, straight from your own recordings.',
+    episodeDescription: 'Darr ke naye daur mein Bharti ne khiladiyon ko diya laughter ka dose. 😂🫣\n'
+        'Dekhiye #KhatronKeKhiladi15, har Sat-Sun raat 9 baje, sirf #Colors aur #Jiohotstar par.\n'
+        '#KhatronKeKhiladi #KKK #KKK15\n'
+        '#RohitShetty #AvikaGor #AvinashMishra #FarrhanaBhatt #GauravKhanna #HarshGujral #JasminBhasin #KaranWahi #OrryAwatramani #RithvikDhanjani #RubinaDilaik #RuhaanikaDhawan #VishalSingh #ShagunSharma #BhartiSingh',
+    chapters: [
+      PodcastChapter(title: 'Intro', durationLabel: '0:00'),
+      PodcastChapter(title: 'Main Discussion', durationLabel: '0:20'),
+    ],
   ),
   PodcastEpisode(
     id: 'ep_3',
-    title: 'A TED Talk Worth Spreading',
-    showTitle: 'TED Talks',
-    coverUrl: 'https://picsum.photos/seed/ep_3/400/400',
-    durationLabel: '18:32',
-    videoUrl: 'https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4',
+    title: 'Episode 3',
+    showTitle: 'Bharti TV',
+    coverUrl: 'assets/images/podcasts/episode_3.png',
+    durationLabel: '1:00',
+    videoUrl: 'asset:assets/videos/episode_3.mp4',
+    showHost: 'Bharti Singh & Haarsh Limbachiyaa',
+    showDescription: 'Real conversations and stories, straight from your own recordings.',
+    episodeDescription: 'Full Podcast will be released soon\n'
+        'Download Indias Largest Edtech Platform in Homoeopathy - Magnum Opus App 👇\n'
+        'https://play.google.co...',
+    chapters: [
+      PodcastChapter(title: 'Intro', durationLabel: '0:00'),
+      PodcastChapter(title: 'Main Discussion', durationLabel: '0:25'),
+    ],
   ),
   PodcastEpisode(
     id: 'ep_4',
-    title: 'Coding Advice Nobody Tells You',
-    showTitle: 'Tech Talk Podcast',
-    coverUrl: 'https://picsum.photos/seed/ep_4/400/400',
-    durationLabel: '18:02',
-    videoUrl: 'https://raw.githubusercontent.com/chthomos/video-media-samples/master/big-buck-bunny-1080p-30sec.mp4',
-  ),
-  PodcastEpisode(
-    id: 'ep_5',
-    title: 'Personal Finance 101: Where Should Your First Salary Go?',
-    showTitle: 'Paisa Vaisa',
-    coverUrl: 'https://picsum.photos/seed/ep_5/400/400',
-    durationLabel: '44:00',
-    videoUrl: 'https://raw.githubusercontent.com/chthomos/video-media-samples/master/big-buck-bunny-1080p-60fps-30sec.mp4',
-  ),
-  PodcastEpisode(
-    id: 'ep_6',
-    title: 'Inside the Indian Startup Ecosystem',
-    showTitle: 'The Startup Fridays Podcast',
-    coverUrl: 'https://picsum.photos/seed/ep_6/400/400',
-    durationLabel: '55:00',
-    videoUrl: 'https://flutter.github.io/assets-for-api-docs/assets/videos/butterfly.mp4',
-  ),
-  PodcastEpisode(
-    id: 'ep_7',
-    title: 'Fintech in India: The Wild West of Digital Money',
-    showTitle: 'India Fintech Diaries',
-    coverUrl: 'https://picsum.photos/seed/ep_7/400/400',
-    durationLabel: '37:00',
-    videoUrl: 'https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4',
-  ),
-  // YouTube-hosted episodes — `videoUrl` is a plain YouTube link, so
-  // PodcastEpisode.isYoutubeVideo picks it up automatically and it opens
-  // in the in-app YouTube player (podcast_video_player_screen.dart), not
-  // an external browser/app.
-  PodcastEpisode(
-    id: 'ep_8',
-    title: 'Bear Bicep Shiva',
-    showTitle: 'Fitness',
-    coverUrl: 'https://picsum.photos/seed/ep_8/400/400',
+    title: 'Episode 4',
+    showTitle: 'Trailer Breakdown',
+    coverUrl: 'assets/images/podcasts/episode_4.png',
     durationLabel: '--:--',
-    videoUrl: 'yi8hQ5XxzgM',
-  ),
-  PodcastEpisode(
-    id: 'ep_9',
-    title: 'Business Talk',
-    showTitle: 'Business',
-    coverUrl: 'https://picsum.photos/seed/ep_9/400/400',
-    durationLabel: '--:--',
-    videoUrl: 'JqxZGXQf0qg',
-  ),
-  PodcastEpisode(
-    id: 'ep_10',
-    title: 'AI Talk',
-    showTitle: 'AI',
-    coverUrl: 'https://picsum.photos/seed/ep_10/400/400',
-    durationLabel: '--:--',
-    videoUrl: 'fVXJ4gpy95Y',
-  ),
-  PodcastEpisode(
-    id: 'ep_11',
-    title: 'Self Improvement',
-    showTitle: 'Self Improvement',
-    coverUrl: 'https://picsum.photos/seed/ep_11/400/400',
-    durationLabel: '--:--',
-    videoUrl: 'OcISVEh1jyw',
-  ),
-  PodcastEpisode(
-    id: 'ep_12',
-    title: 'Emotional Intelligence',
-    showTitle: 'Emotional Intelligence',
-    coverUrl: 'https://picsum.photos/seed/ep_12/400/400',
-    durationLabel: '--:--',
-    videoUrl: 'YcGXViwXItM',
+    videoUrl: 'asset:assets/videos/episode_4.mp4',
+    showHost: 'Varun Dhawan ft. Ranveer Allahbadia',
+    showDescription: 'Real conversations and stories, straight from your own recordings.',
+    episodeDescription: 'Check out our Video Editing Mastery Course - https://bbsh.co.in/bbs...\n'
+        'In this video, we break down the Varun Dhawan podcast trailer from @ranveerallahbadia episode 338 to show you how to craft a high-impact podcast trailer from scratch. Whether you\'re just learning how to start video editing, or looking for fresh podcast trailer ideas, this guide is packed with everything you need!\n'
+        'From the tone of a podcast trailer, to the perfect sound effects and background music, we analyze what makes this trailer work so well and how you can apply the same tricks. Plus, we offer a podcast trailer template to help structure your own!\n'
+        'What You\'ll Learn:\n'
+        '1. How to make a podcast trailer that grabs attention?\n'
+        '2. What to say in a podcast trailer to hook your audience?\n'
+        '3. Examples of podcast trailers that work.\n'
+        '4. The role of music and sound design in podcast intros.\n'
+        '5. Video editing tips for beginners.',
+    chapters: [
+      PodcastChapter(title: 'Intro', durationLabel: '0:00'),
+      PodcastChapter(title: 'Main Discussion', durationLabel: '0:30'),
+    ],
   ),
 ];

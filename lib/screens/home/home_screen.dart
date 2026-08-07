@@ -17,19 +17,9 @@ import 'package:Melora/screens/home/song_collection_screen.dart';
 import 'package:Melora/screens/podcasts/podcast_feed_screen.dart';
 import 'package:Melora/screens/updates/updates_screen.dart';
 import 'package:Melora/features/onboarding/widgets/common/profile_avatar_button.dart';
+import 'package:Melora/screens/podcasts/following_shows_screen.dart';
 import 'package:Melora/screens/library/library_detail_screen.dart';
-/// ---------------------------------------------------------------------
-/// Home screen — shows exactly the 5 curated sections (Hindi / Indie,
-/// Bollywood Style, Marathi Style, Punjabi, Lofi / Chill) defined in
-/// `curated_songs_data.dart`. Each song has its own generated poster
-/// under `assets/images/`, loaded locally — no network dependency.
-/// ---------------------------------------------------------------------
 
-/// Puts every song that has a real bundled poster image first (so the
-/// songs images added under `assets/images/songs/` show at the top of
-/// Home), de-duplicated by normalized title so the same song is never
-/// listed twice. Everything else keeps its original order and follows
-/// after. Used by both the "All" and "Music" tabs.
 List<Song> _dedupedHomeSongs(List<Song> songs) {
   final withImage = <Song>[];
   final withoutImage = <Song>[];
@@ -39,7 +29,6 @@ List<Song> _dedupedHomeSongs(List<Song> songs) {
       if (seenImageTitles.add(normalizeTitle(s.title))) {
         withImage.add(s);
       }
-      // else: same image-song already added once — skip the duplicate.
     } else {
       withoutImage.add(s);
     }
@@ -55,7 +44,7 @@ class HomeScreen extends ConsumerStatefulWidget {
 }
 
 class _HomeScreenState extends ConsumerState<HomeScreen> {
-  int _selectedPill = 1; // 0 = All, 1 = Music, 2 = Following, 3 = Podcasts
+  int _selectedPill = 1;
 
   void _showSnack(String message) {
     ScaffoldMessenger.of(context).hideCurrentSnackBar();
@@ -70,9 +59,15 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   }
 
   void _onPillSelected(int index) {
+    if (index == 4) {
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (_) => const FollowingShowsScreen(),
+        ),
+      );
+      return;
+    }
     if (index == 3) {
-      // Highlight the Podcasts pill immediately (like it used to before),
-      // then open the feed.
       setState(() => _selectedPill = index);
       Navigator.of(context).push(
         MaterialPageRoute(
@@ -105,16 +100,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     );
   }
 
-  /// Builds a real [Song] from a curated entry and hands it to the
-  /// app-wide player, so tapping any poster actually starts playback
-  /// (mini player appears, progress ticks, pause/seek all work) — and so
-  /// the mini player + full player screen always show the SAME song
-  /// (title + poster) that was tapped, never a mismatched one.
-  ///
-  /// For the Bollywood Classics titles, we already resolved a real,
-  /// playable Audius stream (see `curated_bollywood_songs.dart`), so we
-  /// reuse that exact Song — correct audio, correct local poster, correct
-  /// genre/movie label — instead of the disconnected placeholder track.
   void _playSong(CuratedSong song, [CuratedSection? section]) {
     Song buildSong(CuratedSong s) {
       final resolved = resolvedBollywoodSongForTitle(s.title) ??
@@ -209,9 +194,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 ),
               ),
             ),
-            // "All" keeps the original simple list. "Music" shows a
-            // richer grid with real poster art (falls back to a genre
-            // gradient tile when a song has no cover image yet).
             Consumer(builder: (context, ref, _) {
               final songsAsync = ref.watch(allSongsProvider);
               return songsAsync.when(
@@ -230,15 +212,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   ),
                 ),
                 data: (songs) {
-                  // Songs that have a real bundled poster image go first
-                  // (deduplicated by title, so the same song never shows
-                  // twice), everything else keeps its original order
-                  // after them. Shared by both "All" and "Music" so the
-                  // image songs are pinned to the top in both tabs.
                   final sortedSongs = _dedupedHomeSongs(songs);
 
-                  // Builds one titled horizontally-scrolling row of songs
-                  // (Spotify-style: swipe left/right instead of a fixed grid).
                   Widget titledGrid(String title, List<Song> rowSongs, int startIndex) {
                     return SliverMainAxisGroup(
                       slivers: [
@@ -292,9 +267,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     );
                   }
 
-                  // Horizontal row of artist circles — uses the artists you
-                  // actually added local photos for (artistPhotoAssets), not
-                  // fake network placeholders.
                   Widget artistsRow() {
                     final entries = artistPhotoAssets.entries.toList();
                     if (entries.isEmpty) return const SliverToBoxAdapter(child: SizedBox.shrink());
@@ -327,27 +299,27 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                 return SizedBox(
                                   width: 78,
                                   child: GestureDetector(
-                                  onTap: () {
-  final artistSongs = sortedSongs
-      .where((s) =>
-          (s.artistName ?? '').trim().toLowerCase() ==
-          name.trim().toLowerCase())
-      .toList();
-  if (artistSongs.isEmpty) {
-    _showSnack('No songs found for $name');
-    return;
-  }
-  Navigator.of(context).push(
-    MaterialPageRoute(
-      builder: (_) => LibraryDetailScreen(
-        title: name,
-        subtitle: '${artistSongs.length} songs',
-        kind: LibraryEntryKind.artist,
-        imageUrl: null,
-      ),
-    ),
-  );
-},
+                                    onTap: () {
+                                      final artistSongs = sortedSongs
+                                          .where((s) =>
+                                              (s.artistName ?? '').trim().toLowerCase() ==
+                                              name.trim().toLowerCase())
+                                          .toList();
+                                      if (artistSongs.isEmpty) {
+                                        _showSnack('No songs found for $name');
+                                        return;
+                                      }
+                                      Navigator.of(context).push(
+                                        MaterialPageRoute(
+                                          builder: (_) => LibraryDetailScreen(
+                                            title: name,
+                                            subtitle: '${artistSongs.length} songs',
+                                            kind: LibraryEntryKind.artist,
+                                            imageUrl: null,
+                                          ),
+                                        ),
+                                      );
+                                    },
                                     child: Column(
                                       children: [
                                         CircleAvatar(
@@ -405,10 +377,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                             ),
                           if (sortedSongs.length > 4)
                             Builder(builder: (context) {
-                              // Keep the same 500-song list, but don't lead
-                              // with the 4 songs already shown up top in
-                              // "Recommended for you" — push those into the
-                              // middle of this list instead of the front.
                               final top4 = sortedSongs.take(4).toList();
                               final rest = sortedSongs.skip(4).toList();
                               final mid = rest.length ~/ 2;
@@ -498,9 +466,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   }
 }
 
-/// ---------------------------------------------------------------------
-/// Header: avatar + "All / Music / Podcasts" pill filters + bell
-/// ---------------------------------------------------------------------
 class _HomeHeader extends ConsumerWidget {
   final int selectedPill;
   final ValueChanged<int> onPillSelected;
@@ -515,7 +480,8 @@ class _HomeHeader extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final unreadUpdates = ref.watch(unreadUpdatesCountProvider);
-    final showFollowing = selectedPill == 1; // only reveal once "Music" is active
+    final showFollowing = selectedPill == 1;
+    final showPodcastFollowing = selectedPill == 3;
 
     return Padding(
       padding: const EdgeInsets.fromLTRB(20, 16, 20, 12),
@@ -541,10 +507,7 @@ class _HomeHeader extends ConsumerWidget {
                       isSelected: selectedPill == 1,
                       onTap: () => onPillSelected(1),
                     ),
-                    // "Following" slides + fades in next to Music, the way
-                    // Spotify reveals its sub-filter chips — not a plain
-                    // width expand.
-                  ClipRect(
+                    ClipRect(
                       child: AnimatedContainer(
                         duration: const Duration(milliseconds: 320),
                         curve: Curves.easeOutCubic,
@@ -576,6 +539,33 @@ class _HomeHeader extends ConsumerWidget {
                       label: 'Podcasts',
                       isSelected: selectedPill == 3,
                       onTap: () => onPillSelected(3),
+                    ),
+                    ClipRect(
+                      child: AnimatedContainer(
+                        duration: const Duration(milliseconds: 320),
+                        curve: Curves.easeOutCubic,
+                        width: showPodcastFollowing ? 118 : 0,
+                        margin: EdgeInsets.only(left: showPodcastFollowing ? 10 : 0),
+                        child: OverflowBox(
+                          minWidth: 118,
+                          maxWidth: 118,
+                          alignment: Alignment.centerLeft,
+                          child: AnimatedSlide(
+                            duration: const Duration(milliseconds: 320),
+                            curve: Curves.easeOutCubic,
+                            offset: showPodcastFollowing ? Offset.zero : const Offset(0.4, 0),
+                            child: AnimatedOpacity(
+                              duration: const Duration(milliseconds: 260),
+                              opacity: showPodcastFollowing ? 1 : 0,
+                              child: _FilterPill(
+                                label: 'Following',
+                                isSelected: false,
+                                onTap: () => onPillSelected(4),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
                     ),
                   ],
                 ),
@@ -668,9 +658,6 @@ class _FilterPill extends StatelessWidget {
   }
 }
 
-/// ---------------------------------------------------------------------
-/// Section header with "See All"
-/// ---------------------------------------------------------------------
 class _SectionHeader extends StatelessWidget {
   final String title;
   final VoidCallback onSeeAll;
@@ -705,10 +692,6 @@ class _SectionHeader extends StatelessWidget {
   }
 }
 
-/// ---------------------------------------------------------------------
-/// Category -> gradient colors. No image assets at all — every card
-/// is just a solid gradient color box, cheap and copyright-safe.
-/// ---------------------------------------------------------------------
 const Map<String, List<Color>> categoryGradient = {
   'Hindi / Indie': [Color(0xFF7C3AED), Color(0xFF2E1065)],
   'Bollywood Style': [Color(0xFFE0703A), Color(0xFF7C2D12)],
@@ -717,8 +700,6 @@ const Map<String, List<Color>> categoryGradient = {
   'Lofi / Chill': [Color(0xFF3B5BDB), Color(0xFF1E1B4B)],
 };
 
-/// Genre -> gradient colors, used as the fallback tile background on the
-/// "Music" grid for any song that doesn't have a real cover image yet.
 const Map<String, List<Color>> genreGradient = {
   'Bollywood': [Color(0xFFE0703A), Color(0xFF7C2D12)],
   'Hindi': [Color(0xFF7C3AED), Color(0xFF2E1065)],
@@ -736,20 +717,12 @@ const Map<String, List<Color>> genreGradient = {
   'Classical': [Color(0xFFB45309), Color(0xFF451A03)],
 };
 
-/// ---------------------------------------------------------------------
-/// Grid card used on the "Music" tab — real poster image when the song
-/// has one bundled locally, otherwise a genre-colored gradient tile so
-/// the grid still looks intentional instead of a blank placeholder.
-/// ---------------------------------------------------------------------
 class _SongGridTile extends StatelessWidget {
   final Song song;
   final VoidCallback onTap;
 
   const _SongGridTile({required this.song, required this.onTap});
 
-  /// True when this song has a real bundled poster image (not a remote
-  /// URL, not empty) — i.e. it'll render an actual picture instead of the
-  /// gradient/music-note placeholder.
   static bool hasLocalCover(Song song) {
     final cover = song.coverUrl;
     return cover != null && cover.isNotEmpty && !cover.startsWith('http');
@@ -878,7 +851,6 @@ class _PosterBox extends StatelessWidget {
           ),
         );
 
-    // 1) Local bundled poster (Bollywood Style titles) — always first.
     if (posterPath != null) {
       return ClipRRect(
         borderRadius: borderRadius,
@@ -890,7 +862,6 @@ class _PosterBox extends StatelessWidget {
       );
     }
 
-    // 2) Real cover art resolved from Audius for this title.
     if (networkCover != null && networkCover.isNotEmpty) {
       return ClipRRect(
         borderRadius: borderRadius,
@@ -903,7 +874,6 @@ class _PosterBox extends StatelessWidget {
       );
     }
 
-    // 3) Nothing found (e.g. Audius had no match) — plain gradient box.
     return ClipRRect(
       borderRadius: borderRadius,
       child: gradientFallback(),
@@ -911,9 +881,6 @@ class _PosterBox extends StatelessWidget {
   }
 }
 
-/// ---------------------------------------------------------------------
-/// Horizontal poster row for a curated section.
-/// ---------------------------------------------------------------------
 class _PosterRow extends StatelessWidget {
   final CuratedSection section;
   final void Function(CuratedSong song) onTap;
@@ -996,10 +963,6 @@ class _PosterRow extends StatelessWidget {
   }
 }
 
-/// ---------------------------------------------------------------------
-/// Top "Bollywood Classics" 2-column grid — each cell is a compact row:
-/// small square poster, title, and a circular play button.
-/// ---------------------------------------------------------------------
 class _ClassicsGridSection extends StatelessWidget {
   final CuratedSection section;
   final void Function(CuratedSong song) onTap;
@@ -1087,10 +1050,6 @@ class _ClassicsGridSection extends StatelessWidget {
   }
 }
 
-/// ---------------------------------------------------------------------
-/// Horizontal "Bollywood Classics" carousel — large posters with the
-/// title overlaid at the bottom in a bold serif-ish style.
-/// ---------------------------------------------------------------------
 class _ClassicsCarousel extends StatelessWidget {
   final CuratedSection section;
   final void Function(CuratedSong song) onTap;
@@ -1188,9 +1147,6 @@ class _ClassicsCarousel extends StatelessWidget {
   }
 }
 
-/// ---------------------------------------------------------------------
-/// "See All" screen shared by every curated section.
-/// ---------------------------------------------------------------------
 class _SeeAllScreen extends StatelessWidget {
   final CuratedSection section;
   final void Function(CuratedSong song) onSongTap;

@@ -70,12 +70,19 @@ class _PodcastAudioPlayerScreenState extends State<PodcastAudioPlayerScreen> {
             const SizedBox(height: 12),
             ClipRRect(
               borderRadius: BorderRadius.circular(16),
-              child: CachedNetworkImage(
-                imageUrl: episode.coverUrl,
-                width: 260,
-                height: 260,
-                fit: BoxFit.cover,
-              ),
+              child: episode.coverUrl.startsWith('http')
+                  ? CachedNetworkImage(
+                      imageUrl: episode.coverUrl,
+                      width: 260,
+                      height: 260,
+                      fit: BoxFit.cover,
+                    )
+                  : Image.asset(
+                      episode.coverUrl,
+                      width: 260,
+                      height: 260,
+                      fit: BoxFit.cover,
+                    ),
             ),
             const SizedBox(height: 28),
             Text(
