@@ -1,0 +1,62 @@
+[
+  {
+    "id": "artist_1",
+    "name": "Arijit Singh",
+    "bio": "Award-winning playback singer known for soulful romantic ballads.",
+    "image_url": "assets/images/artists/arijit_singh.jpg"
+  },
+  {
+    "id": "artist_2",
+    "name": "Armaan Malik",
+    "bio": "Pop/playback singer known for melodic, youthful love songs.",
+    "image_url": "assets/images/artists/armaan_malik.jpg"
+  },
+  {
+    "id": "artist_3",
+    "name": "Jubin Nautiyal",
+    "bio": "Playback singer known for emotional, chart-topping love songs.",
+    "image_url": "assets/images/artists/jubin_nautiyal.jpg"
+  },
+  {
+    "id": "artist_4",
+    "name": "Shreya Ghoshal",
+    "bio": "National Award-winning playback singer with a classical-pop range.",
+    "image_url": "assets/images/artists/shreya_ghoshal.jpg"
+  },
+  {
+    "id": "artist_5",
+    "name": "Sonu Nigam",
+    "bio": "Veteran playback singer known for his versatile, golden voice.",
+    "image_url": "assets/images/artists/sonu_nigam.jpg"
+  },
+  {
+    "id": "artist_6",
+    "name": "Badshah",
+    "bio": "Rapper and music producer known for high-energy party anthems.",
+    "image_url": "assets/images/artists/badshah.jpg"
+  },
+  {
+    "id": "artist_7",
+    "name": "Diljit Dosanjh",
+    "bio": "Singer and actor known for chart-topping Punjabi pop hits.",
+    "image_url": "assets/images/artists/diljit_dosanjh.jpg"
+  },
+  {
+    "id": "artist_8",
+    "name": "Ajay Atul",
+    "bio": "Composer duo known for iconic Marathi and Bollywood anthems.",
+    "image_url": "assets/images/artists/ajay_atul.jpg"
+  },
+  {
+    "id": "artist_9",
+    "name": "Akhil Sachdeva",
+    "bio": "Singer-songwriter known for heartfelt romantic tracks.",
+    "image_url": "assets/images/artists/akhil_sachdeva.jpg"
+  },
+  {
+    "id": "artist_10",
+    "name": "Adarsh Shinde",
+    "bio": "Marathi playback singer known for folk-infused melodies.",
+    "image_url": "assets/images/artists/adarsh_shinde.jpg"
+  }
+]

@@ -1,0 +1,8 @@
+.env
+build/
+.dart_tool/
+.packages
+*.g.dart
+*.freezed.dart
+android/local.properties
+ios/Flutter/Flutter.podspec

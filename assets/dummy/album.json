@@ -1,0 +1,58 @@
+[
+  {
+    "id": "album_1",
+    "artist_id": "artist_1",
+    "title": "Aashiqui 2",
+    "cover_url": "https://loremflickr.com/400/400/bollywood,romance,poster",
+    "released_at": "2013-04-26"
+  },
+  {
+    "id": "album_2",
+    "artist_id": "artist_2",
+    "title": "Jabariya Jodi",
+    "cover_url": "https://loremflickr.com/400/400/bollywood,wedding,poster",
+    "released_at": "2019-08-02"
+  },
+  {
+    "id": "album_3",
+    "artist_id": "artist_3",
+    "title": "Sultan",
+    "cover_url": "https://loremflickr.com/400/400/bollywood,dance,poster",
+    "released_at": "2016-07-06"
+  },
+  {
+    "id": "album_4",
+    "artist_id": "artist_4",
+    "title": "Genius",
+    "cover_url": "https://loremflickr.com/400/400/bollywood,drama,poster",
+    "released_at": "2018-08-31"
+  },
+  {
+    "id": "album_5",
+    "artist_id": "artist_5",
+    "title": "Bajirao Mastani",
+    "cover_url": "https://loremflickr.com/400/400/bollywood,classical,poster",
+    "released_at": "2015-12-18"
+  },
+  {
+    "id": "album_6",
+    "artist_id": "artist_6",
+    "title": "Loveyatri",
+    "cover_url": "https://loremflickr.com/400/400/bollywood,festival,poster",
+    "released_at": "2018-10-05"
+  },
+  {
+    "id": "album_7",
+    "artist_id": "artist_7",
+    "title": "Kabir Singh",
+    "cover_url": "https://loremflickr.com/400/400/bollywood,intense,poster",
+    "released_at": "2019-06-21"
+  },
+  {
+    "id": "album_8",
+    "artist_id": "artist_8",
+    "title": "Bajrangi Bhaijaan",
+    "cover_url": "https://loremflickr.com/400/400/bollywood,emotional,poster",
+    "released_at": "2015-07-17"
+  }
+]
