@@ -8,6 +8,7 @@ import 'package:Melora/screens/auth/login_screen.dart';
 import 'package:Melora/screens/profile/profile_screen.dart';
 import 'package:Melora/screens/settings/settings_screen.dart';
 import 'package:Melora/screens/updates/updates_screen.dart';
+import 'package:go_router/go_router.dart';
 
 /// ---------------------------------------------------------------------
 /// AppDrawer
@@ -74,12 +75,10 @@ class AppDrawer extends ConsumerWidget {
             _DrawerTile(
               icon: Icons.person_add_alt_1_rounded,
               label: 'Add account',
-              onTap: () => _closeThen(
-                context,
-                () => Navigator.of(context).push(
-                  MaterialPageRoute(builder: (_) => const LoginScreen()),
-                ),
-              ),
+             onTap: () => _closeThen(
+  context,
+  () => context.push('/login'),
+),
             ),
             _DrawerTile(
               icon: Icons.history_rounded,

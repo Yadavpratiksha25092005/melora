@@ -2,6 +2,7 @@ class ApiEndpoints {
   ApiEndpoints._();
 
   static const String login = "/auth/login";
+  static const String updateName = "/auth/profile/name";
   static const String signup = "/auth/signup";
   static const String refresh = "/auth/refresh";
 

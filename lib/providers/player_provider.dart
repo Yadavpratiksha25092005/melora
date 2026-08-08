@@ -11,6 +11,7 @@ import '../models/song.dart';
 import '../services/melora_audio_handler.dart';
 import '../services/youtube_audio_service.dart';
 import 'audio_handler_provider.dart';
+import 'download_provider.dart';
 
 /// Cache of asset-path -> local temp-file path, so the same bundled poster
 /// (e.g. "assets/images/tum_hi_ho.jpg") is only copied to disk once per
@@ -100,7 +101,7 @@ class PlayerState {
 /// App-wide audio player. Kept as a single instance so the mini-player
 /// and full player screen share the same playback state across the app.
 class PlayerNotifier extends StateNotifier<PlayerState> {
-  PlayerNotifier(this._audioHandler) : super(const PlayerState()) {
+  PlayerNotifier(this._audioHandler, this._ref) : super(const PlayerState()) {
     _player.positionStream.listen((pos) {
       if (!_isMock) {
         state = state.copyWith(position: pos);
@@ -144,6 +145,7 @@ class PlayerNotifier extends StateNotifier<PlayerState> {
   }
 
   final MeloraAudioHandler _audioHandler;
+  final Ref _ref;
   final AudioPlayer _player = AudioPlayer();
 
   /// Pushes the current song's title/artist/artwork to the OS
@@ -242,6 +244,15 @@ class PlayerNotifier extends StateNotifier<PlayerState> {
     final song = state.currentSong;
     if (song == null) return;
     try {
+      // Play the downloaded local file when this song has one, instead
+      // of always re-streaming from the network — this is what makes
+      // "Download to listen offline" actually work.
+      final downloadedPath = _ref.read(downloadProvider)[song.id]?.localPath;
+      if (downloadedPath != null && await File(downloadedPath).exists()) {
+        await _player.setFilePath(downloadedPath);
+        await _player.play();
+        return;
+      }
       if (song.fileUrl.startsWith('asset:')) {
         final assetPath = song.fileUrl.replaceFirst('asset:', '');
         await _player.setAsset(assetPath);
@@ -303,8 +314,16 @@ class PlayerNotifier extends StateNotifier<PlayerState> {
     }
   }
 
-  Future<void> skipNext() async {
-    if (!state.hasNext) return;
+ Future<void> skipNext() async {
+    // In shuffle mode "next" can jump to any track in the queue, so the
+    // sequential hasNext guard (which only checks currentIndex against
+    // the end of the list) doesn't apply — only bail out here if the
+    // queue can't provide a next track at all (empty or single-song).
+    if (state.isShuffling) {
+      if (state.queue.length <= 1) return;
+    } else if (!state.hasNext) {
+      return;
+    }
     final nextIndex = state.isShuffling
         ? _randomIndexExcluding(state.currentIndex)
         : state.currentIndex + 1;
@@ -406,5 +425,5 @@ class PlayerNotifier extends StateNotifier<PlayerState> {
 final playerProvider =
     StateNotifierProvider<PlayerNotifier, PlayerState>((ref) {
   final handler = ref.watch(audioHandlerProvider);
-  return PlayerNotifier(handler);
+  return PlayerNotifier(handler, ref);
 });

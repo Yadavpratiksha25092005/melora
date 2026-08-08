@@ -5,9 +5,7 @@ class AppConstants {
   static const String tagline = "FEEL EVERY BEAT";
 
   // change this to your backend base URL
-  static const String baseUrl = "http://192.168.1.17:8080/api/v1";
-
-  static const String tokenKey = "auth_token";
+static const String baseUrl = "https://melora-backend-w2f6.onrender.com/api/v1";  static const String tokenKey = "auth_token";
 
   /// No backend/SMS gateway wired up yet — screens run on mock data
   /// (DummyDataSource) so the UI can be built and tested standalone.

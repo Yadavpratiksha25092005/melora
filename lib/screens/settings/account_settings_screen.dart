@@ -21,7 +21,6 @@ class AccountSettingsScreen extends ConsumerStatefulWidget {
 }
 
 class _AccountSettingsScreenState extends ConsumerState<AccountSettingsScreen> {
-  String? _savedPasswordMask;
 
   void _showSnack(String message) {
     ScaffoldMessenger.of(context).hideCurrentSnackBar();
@@ -41,66 +40,6 @@ class _AccountSettingsScreenState extends ConsumerState<AccountSettingsScreen> {
     );
   }
 
-  void _changePassword() {
-    final currentController = TextEditingController();
-    final newController = TextEditingController();
-    showDialog(
-      context: context,
-      builder: (dialogContext) => AlertDialog(
-        backgroundColor: AppColors.surface,
-        title: const Text('Change password', style: TextStyle(color: Colors.white)),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            TextField(
-              controller: currentController,
-              obscureText: true,
-              style: const TextStyle(color: Colors.white),
-              decoration: InputDecoration(
-                filled: true,
-                fillColor: AppColors.surfaceLight,
-                hintText: 'Current password',
-                hintStyle: const TextStyle(color: Colors.white38),
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: BorderSide.none),
-              ),
-            ),
-            const SizedBox(height: 12),
-            TextField(
-              controller: newController,
-              obscureText: true,
-              style: const TextStyle(color: Colors.white),
-              decoration: InputDecoration(
-                filled: true,
-                fillColor: AppColors.surfaceLight,
-                hintText: 'New password',
-                hintStyle: const TextStyle(color: Colors.white38),
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: BorderSide.none),
-              ),
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(dialogContext).pop(),
-            child: const Text('Cancel', style: TextStyle(color: Colors.white54)),
-          ),
-          TextButton(
-            onPressed: () {
-              final newPass = newController.text.trim();
-              Navigator.of(dialogContext).pop();
-              if (newPass.isNotEmpty) {
-                setState(() => _savedPasswordMask = '•' * newPass.length);
-                _showSnack('Password updated');
-              } else {
-                _showSnack('Enter a new password');
-              }
-            },
-            child: Text('Save', style: TextStyle(color: AppColors.primary)),
-          ),
-        ],
-      ),
-    );
-  }
 
   void _closeAccount() {
     showDialog(
@@ -118,13 +57,9 @@ class _AccountSettingsScreenState extends ConsumerState<AccountSettingsScreen> {
             child: const Text('Cancel', style: TextStyle(color: Colors.white54)),
           ),
           TextButton(
-            onPressed: () async {
+            onPressed: () {
               Navigator.of(dialogContext).pop();
-              await ref.read(authProvider.notifier).logout();
-              if (context.mounted) {
-                Navigator.of(context).popUntil((route) => route.isFirst);
-                _showSnack('Account closed');
-              }
+              _showSnack('Account deletion isn\'t available yet — contact support');
             },
             child: const Text('Close account', style: TextStyle(color: Color(0xFFFF5C5C))),
           ),
@@ -159,16 +94,7 @@ class _AccountSettingsScreenState extends ConsumerState<AccountSettingsScreen> {
             ),
             trailing: const Icon(Icons.chevron_right, color: Colors.white38),
           ),
-          const Divider(color: Colors.white12, height: 1, indent: 20, endIndent: 20),
-          ListTile(
-            onTap: _changePassword,
-            leading: const Icon(Icons.lock_reset_outlined, color: Colors.white70),
-            title: const Text('Change password', style: TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.w600)),
-            subtitle: _savedPasswordMask != null
-                ? Text(_savedPasswordMask!, style: const TextStyle(color: Colors.white38, fontSize: 12))
-                : null,
-            trailing: const Icon(Icons.chevron_right, color: Colors.white38),
-          ),
+        
           const Divider(color: Colors.white12, height: 1, indent: 20, endIndent: 20),
           ListTile(
             onTap: _closeAccount,

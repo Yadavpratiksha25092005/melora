@@ -14,9 +14,13 @@ class ApiClient {
         sendTimeout: const Duration(seconds: 30),
       ),
     );
+    
+    _dio.interceptors.add(LogInterceptor(requestBody: true, responseBody: true, error: true));   // ← YE NAYI LINE ADD KARNI HAI
+
 
     _dio.interceptors.add(
       InterceptorsWrapper(
+        
         onRequest: (options, handler) async {
           final token = await _storage.read(key: AppConstants.tokenKey);
           if (token != null) {

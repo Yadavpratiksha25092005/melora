@@ -20,11 +20,13 @@ class LoginScreen extends ConsumerStatefulWidget {
 class _LoginScreenState extends ConsumerState<LoginScreen> {
   final _phoneFormKey = GlobalKey<FormState>();
   final _otpFormKey = GlobalKey<FormState>();
+  final _nameController = TextEditingController();
   final _phoneController = TextEditingController();
   final _otpController = TextEditingController();
 
   @override
   void dispose() {
+    _nameController.dispose();
     _phoneController.dispose();
     _otpController.dispose();
     super.dispose();
@@ -42,6 +44,14 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
           otp: _otpController.text.trim(),
         );
     if (success && mounted) {
+      final name = _nameController.text.trim();
+      if (name.isNotEmpty) {
+        // Fire-and-continue: save the name entered on this screen, but
+        // don't block navigation on it — failing to save the name
+        // shouldn't stop the user from getting into the app.
+        await ref.read(authProvider.notifier).updateProfile(username: name);
+      }
+      if (!mounted) return;
       final onboardingDone = await ref.read(onboardingCompleteProvider.future);
       if (!mounted) return;
       context.go(onboardingDone ? RouteNames.home : RouteNames.onboardingWelcome);
@@ -68,7 +78,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
               Text('Welcome back', style: AppTextStyles.heading1),
               const SizedBox(height: 8),
               Text(
-                authState.otpSent ? 'Enter the code sent to your phone' : 'Log in with your phone number',
+                authState.otpSent ? 'Enter the code sent to your phone' : 'Log in with your name and phone number',
                 style: AppTextStyles.caption,
               ),
               const SizedBox(height: 32),
@@ -78,6 +88,18 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      AppTextField(
+                        controller: _nameController,
+                        label: 'Name',
+                        keyboardType: TextInputType.name,
+                        validator: (value) {
+                          if (value == null || value.trim().isEmpty) {
+                            return 'Name cannot be empty';
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 16),
                       AppTextField(
                         controller: _phoneController,
                         label: 'Phone number',

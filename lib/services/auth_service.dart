@@ -91,6 +91,10 @@ class AuthService {
   /// `avatar_url` (see internal/user/dto.go: UpdateProfileRequest), and
   /// returns {id, name, phone_number, avatar_url} (no email field, since
   /// this backend's user model is phone/OTP-based).
+  /// PUT /auth/profile/name — this backend only supports updating the
+  /// name via the auth module (see internal/auth: UpdateNameRequest /
+  /// UpdateName handler). Avatar isn't supported by the backend yet, so
+  /// avatarUrl is accepted here but not sent.
   Future<User> updateProfile({String? username, String? avatarUrl}) async {
     if (AppConstants.useDummyData) {
       await DummyDataSource.simulateDelay();
@@ -103,12 +107,11 @@ class AuthService {
       return User.fromJson(updated);
     }
 
-    final result = await _client.request<Map<String, dynamic>>(
+ final result = await _client.request<Map<String, dynamic>>(
       () => _client.dio.put(
-        ApiEndpoints.userProfile,
+        ApiEndpoints.updateName,
         data: {
           'name': username ?? '',
-          'avatar_url': avatarUrl ?? '',
         },
       ),
       (data) => data as Map<String, dynamic>,
@@ -117,7 +120,7 @@ class AuthService {
       id: result['id'] as String,
       email: '',
       username: result['name'] as String? ?? username ?? '',
-      avatarUrl: result['avatar_url'] as String?,
+      avatarUrl: avatarUrl,
       phone: result['phone_number'] as String?,
     );
   }

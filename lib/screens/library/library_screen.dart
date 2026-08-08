@@ -46,7 +46,10 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
     switch (_filter) {
       case _LibraryFilter.playlists:
         return entries
-            .where((e) => e.kind == LibraryEntryKind.playlist || e.kind == LibraryEntryKind.likedSongs)
+            .where((e) =>
+                e.kind == LibraryEntryKind.playlist ||
+                e.kind == LibraryEntryKind.likedSongs ||
+                e.kind == LibraryEntryKind.downloads)
             .toList();
       case _LibraryFilter.artists:
         return entries.where((e) => e.kind == LibraryEntryKind.artist).toList();

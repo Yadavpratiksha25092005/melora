@@ -6,6 +6,7 @@ import 'package:Melora/providers/auth_provider.dart';
 import 'package:Melora/providers/custom_playlists_provider.dart';
 import 'package:Melora/screens/auth/login_screen.dart';
 import 'package:Melora/screens/profile/edit_profile_screen.dart';
+import 'package:go_router/go_router.dart';
 
 /// ---------------------------------------------------------------------
 /// ProfileScreen
@@ -102,13 +103,12 @@ class ProfileScreen extends ConsumerWidget {
                         Row(
                           children: [
                             OutlinedButton(
-                              onPressed: () {
-                                if (isGuest) {
-                                  Navigator.of(context).push(
-                                    MaterialPageRoute(builder: (_) => const LoginScreen()),
-                                  );
-                                } else {
-                                  Navigator.of(context).push(
+                             onPressed: () {
+  if (isGuest) {
+    context.push('/login');
+  } else {
+    Navigator.of(context).push(
+      
                                     MaterialPageRoute(builder: (_) => const EditProfileScreen()),
                                   );
                                 }
@@ -150,17 +150,15 @@ class ProfileScreen extends ConsumerWidget {
                     style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.w800),
                   ),
                   TextButton.icon(
-                    onPressed: () {
-                      if (isGuest) {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(builder: (_) => const LoginScreen()),
-                        );
-                      } else {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(builder: (_) => const EditProfileScreen()),
-                        );
-                      }
-                    },
+                   onPressed: () {
+  if (isGuest) {
+    context.push('/login');
+  } else {
+    Navigator.of(context).push(
+      MaterialPageRoute(builder: (_) => const EditProfileScreen()),
+    );
+  }
+},
                     icon: const Icon(Icons.edit_outlined, size: 16, color: Colors.white70),
                     label: const Text('Manage', style: TextStyle(color: Colors.white70)),
                   ),

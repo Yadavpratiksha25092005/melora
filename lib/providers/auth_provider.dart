@@ -40,6 +40,8 @@ class AuthState {
 class AuthNotifier extends StateNotifier<AuthState> {
   AuthNotifier(this._repo) : super(const AuthState());
   final AuthRepository _repo;
+  bool _busy = false;   // ← YE LINE ADD KARO
+
 
   Future<bool> signup({
     required String email,
@@ -74,21 +76,24 @@ class AuthNotifier extends StateNotifier<AuthState> {
       return false;
     }
   }
-
-  Future<bool> verifyOtp({required String phone, required String otp}) async {
-    state = state.copyWith(isLoading: true, clearError: true);
-    try {
-      final user = await _repo.verifyOtp(phone: phone, otp: otp);
-      state = state.copyWith(user: user, isLoading: false);
-      return true;
-    } on ApiException catch (e) {
-      state = state.copyWith(isLoading: false, error: e.message);
-      return false;
-    } catch (e) {
-      state = state.copyWith(isLoading: false, error: 'Something went wrong');
-      return false;
-    }
+Future<bool> verifyOtp({required String phone, required String otp}) async {
+  if (_busy) return false;
+  _busy = true;
+  state = state.copyWith(isLoading: true, clearError: true);
+  try {
+    final user = await _repo.verifyOtp(phone: phone, otp: otp);
+    state = state.copyWith(user: user, isLoading: false);
+    return true;
+  } on ApiException catch (e) {
+    state = state.copyWith(isLoading: false, error: e.message);
+    return false;
+  } catch (e) {
+    state = state.copyWith(isLoading: false, error: 'Something went wrong');
+    return false;
+  } finally {
+    _busy = false;
   }
+}
 
   void resetOtpFlow() {
     state = state.copyWith(otpSent: false, clearError: true);

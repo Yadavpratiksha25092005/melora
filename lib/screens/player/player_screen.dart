@@ -290,10 +290,7 @@ class PlayerScreen extends ConsumerWidget {
                         ],
                       ),
                     ),
-                    IconButton(
-                      icon: const Icon(Icons.more_vert_rounded, color: Colors.white),
-                      onPressed: () => _openQueueSheet(context, playerState),
-                    ),
+                   const SizedBox(width: 48),
                   ],
                 ),
               ),

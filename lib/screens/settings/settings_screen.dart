@@ -9,6 +9,8 @@ import 'package:Melora/screens/settings/account_settings_screen.dart';
 import 'package:Melora/screens/settings/manage_storage_screen.dart';
 import 'package:Melora/screens/settings/settings_detail_screen.dart';
 import 'package:Melora/screens/settings/settings_info_screen.dart';
+import 'package:Melora/screens/auth/login_screen.dart';
+import 'package:go_router/go_router.dart';
 
 /// ---------------------------------------------------------------------
 /// SettingsScreen
@@ -69,11 +71,13 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             child: const Text('Cancel', style: TextStyle(color: Colors.white54)),
           ),
           TextButton(
-            onPressed: () async {
-              Navigator.of(dialogContext).pop();
-              await ref.read(authProvider.notifier).logout();
-              if (context.mounted) _showSnack('Logged out');
-            },
+  onPressed: () async {
+  Navigator.of(dialogContext).pop();
+  await ref.read(authProvider.notifier).logout();
+  if (context.mounted) {
+    context.go('/login');
+  }
+},
             child: const Text('Log out', style: TextStyle(color: Color(0xFFFF5C5C))),
           ),
         ],
