@@ -59,3 +59,22 @@ func (h *Handler) Profile(w http.ResponseWriter, r *http.Request) {
 	}
 	response.JSON(w, http.StatusOK, res)
 }
+
+func (h *Handler) UpdateName(w http.ResponseWriter, r *http.Request) {
+	userID, ok := r.Context().Value(middleware.UserIDKey).(string)
+	if !ok || userID == "" {
+		response.Error(w, http.StatusUnauthorized, "UNAUTHORIZED", "not authenticated")
+		return
+	}
+	var req UpdateNameRequest
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		response.Error(w, http.StatusBadRequest, "INVALID_BODY", "could not parse request body")
+		return
+	}
+	res, err := h.service.UpdateName(r.Context(), userID, req.Name)
+	if err != nil {
+		response.Error(w, http.StatusBadRequest, "UPDATE_NAME_FAILED", err.Error())
+		return
+	}
+	response.JSON(w, http.StatusOK, res)
+}

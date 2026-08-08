@@ -17,6 +17,7 @@ func AuthRoutes(r chi.Router, h *auth.Handler, jwtSecret string) {
 		r.Group(func(r chi.Router) {
 			r.Use(middleware.Auth(jwtSecret))
 			r.Get("/profile", h.Profile)
+			r.Put("/profile/name", h.UpdateName)
 		})
 	})
 }

@@ -23,6 +23,7 @@ type Service interface {
 	SendOTP(ctx context.Context, req SendOTPRequest) error
 	VerifyOTP(ctx context.Context, req VerifyOTPRequest) (VerifyOTPResponse, error)
 	Profile(ctx context.Context, userID string) (UserResponse, error)
+	UpdateName(ctx context.Context, userID string, name string) (UserResponse, error)
 }
 
 type service struct {
@@ -109,6 +110,16 @@ func (s *service) VerifyOTP(ctx context.Context, req VerifyOTPRequest) (VerifyOT
 
 func (s *service) Profile(ctx context.Context, userID string) (UserResponse, error) {
 	user, err := s.repo.GetByID(ctx, userID)
+	if err != nil {
+		return UserResponse{}, err
+	}
+	return ToUserResponse(user), nil
+}
+func (s *service) UpdateName(ctx context.Context, userID string, name string) (UserResponse, error) {
+	if len(name) == 0 {
+		return UserResponse{}, errors.New("name is required")
+	}
+	user, err := s.repo.UpdateName(ctx, userID, name)
 	if err != nil {
 		return UserResponse{}, err
 	}

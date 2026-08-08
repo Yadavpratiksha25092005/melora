@@ -21,6 +21,10 @@ type VerifyOTPResponse struct {
 	User  UserResponse `json:"user"`
 }
 
+type UpdateNameRequest struct {
+	Name string `json:"name"`
+}
+
 func ToUserResponse(u User) UserResponse {
 	return UserResponse{ID: u.ID, Name: u.Name, PhoneNumber: u.PhoneNumber, IsAdmin: u.IsAdmin}
 }

@@ -17,6 +17,7 @@ type Repository interface {
 	SetOTP(ctx context.Context, phoneNumber, otp string, expiresAt time.Time) error
 	GetByID(ctx context.Context, id string) (User, error)
 	ClearOTP(ctx context.Context, id string) error
+	UpdateName(ctx context.Context, id string, name string) (User, error)
 }
 
 type postgresRepository struct {
@@ -75,4 +76,15 @@ func (r *postgresRepository) GetByID(ctx context.Context, id string) (User, erro
 func (r *postgresRepository) ClearOTP(ctx context.Context, id string) error {
 	_, err := r.db.Exec(ctx, `UPDATE users SET otp_code = NULL, otp_expires_at = NULL WHERE id = $1`, id)
 	return err
+}
+func (r *postgresRepository) UpdateName(ctx context.Context, id string, name string) (User, error) {
+	query := `UPDATE users SET name = $2 WHERE id = $1 RETURNING id, COALESCE(name, ''), phone_number, is_admin, COALESCE(otp_code, ''), otp_expires_at, created_at`
+	row := r.db.QueryRow(ctx, query, id, name)
+
+	var u User
+	err := row.Scan(&u.ID, &u.Name, &u.PhoneNumber, &u.IsAdmin, &u.OTPCode, &u.OTPExpires, &u.CreatedAt)
+	if errors.Is(err, pgx.ErrNoRows) {
+		return User{}, ErrUserNotFound
+	}
+	return u, err
 }
