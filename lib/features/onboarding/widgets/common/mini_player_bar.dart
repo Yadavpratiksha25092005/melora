@@ -143,7 +143,11 @@ class MiniPlayerBar extends ConsumerWidget {
                       return IconButton(
                         visualDensity: VisualDensity.compact,
                         icon: Icon(
+<<<<<<< HEAD
                           isLiked ? Icons.favorite_rounded : Icons.favorite_border_rounded,
+=======
+                          isLiked ? Icons.check_circle_rounded : Icons.add_rounded,
+>>>>>>> 3cb5a6ec211f46c4bc31b1cbd4ba22d147c15624
                           color: isLiked ? const Color(0xFF1ED760) : AppColors.textSecondary,
                           size: 20,
                         ),

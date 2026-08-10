@@ -1,4 +1,7 @@
+<<<<<<< HEAD
 
+=======
+>>>>>>> 3cb5a6ec211f46c4bc31b1cbd4ba22d147c15624
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:share_plus/share_plus.dart';
@@ -117,6 +120,7 @@ class SongCollectionScreen extends ConsumerWidget {
               onTap: () {
                 Navigator.pop(sheetContext);
                 final artist = song.artistName ?? song.artistId;
+<<<<<<< HEAD
                 final videoId = song.youtubeVideoId;
                 final link = (videoId != null && videoId.isNotEmpty)
                     ? 'https://youtube.com/watch?v=$videoId'
@@ -126,6 +130,10 @@ class SongCollectionScreen extends ConsumerWidget {
                     : '${song.title} by $artist — listen on Melora!';
                 Share.share(
                   message,
+=======
+                Share.share(
+                  '${song.title} by $artist — listen on Melora!',
+>>>>>>> 3cb5a6ec211f46c4bc31b1cbd4ba22d147c15624
                   subject: song.title,
                 );
               },

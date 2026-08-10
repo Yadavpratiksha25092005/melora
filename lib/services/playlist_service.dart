@@ -12,7 +12,14 @@ class PlaylistService {
     final allSongs = await DummyDataSource.songs();
     final songIds = (raw['songs'] as List<dynamic>).cast<String>();
     final songs = songIds
+<<<<<<< HEAD
         .map((id) => allSongs.firstWhere((s) => s['id'] == id))
+=======
+        .map((id) => allSongs.where((s) => s['id'] == id).isNotEmpty
+            ? allSongs.firstWhere((s) => s['id'] == id)
+            : null)
+        .whereType<Map<String, dynamic>>()
+>>>>>>> 3cb5a6ec211f46c4bc31b1cbd4ba22d147c15624
         .toList();
     return {...raw, 'songs': songs};
   }

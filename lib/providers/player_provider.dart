@@ -314,8 +314,21 @@ class PlayerNotifier extends StateNotifier<PlayerState> {
     }
   }
 
+<<<<<<< HEAD
   Future<void> skipNext() async {
     if (!state.hasNext) return;
+=======
+ Future<void> skipNext() async {
+    // In shuffle mode "next" can jump to any track in the queue, so the
+    // sequential hasNext guard (which only checks currentIndex against
+    // the end of the list) doesn't apply — only bail out here if the
+    // queue can't provide a next track at all (empty or single-song).
+    if (state.isShuffling) {
+      if (state.queue.length <= 1) return;
+    } else if (!state.hasNext) {
+      return;
+    }
+>>>>>>> 3cb5a6ec211f46c4bc31b1cbd4ba22d147c15624
     final nextIndex = state.isShuffling
         ? _randomIndexExcluding(state.currentIndex)
         : state.currentIndex + 1;

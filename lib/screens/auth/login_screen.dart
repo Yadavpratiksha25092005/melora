@@ -20,11 +20,19 @@ class LoginScreen extends ConsumerStatefulWidget {
 class _LoginScreenState extends ConsumerState<LoginScreen> {
   final _phoneFormKey = GlobalKey<FormState>();
   final _otpFormKey = GlobalKey<FormState>();
+<<<<<<< HEAD
+=======
+  final _nameController = TextEditingController();
+>>>>>>> 3cb5a6ec211f46c4bc31b1cbd4ba22d147c15624
   final _phoneController = TextEditingController();
   final _otpController = TextEditingController();
 
   @override
   void dispose() {
+<<<<<<< HEAD
+=======
+    _nameController.dispose();
+>>>>>>> 3cb5a6ec211f46c4bc31b1cbd4ba22d147c15624
     _phoneController.dispose();
     _otpController.dispose();
     super.dispose();
@@ -36,6 +44,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   }
 
   Future<void> _submitVerifyOtp() async {
+<<<<<<< HEAD
   if (!_otpFormKey.currentState!.validate()) return;
   final success = await ref.read(authProvider.notifier).verifyOtp(
         phone: _phoneController.text.trim(),
@@ -47,6 +56,27 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     context.go(onboardingDone ? RouteNames.home : RouteNames.onboardingWelcome);
   }
 }
+=======
+    if (!_otpFormKey.currentState!.validate()) return;
+    final success = await ref.read(authProvider.notifier).verifyOtp(
+          phone: _phoneController.text.trim(),
+          otp: _otpController.text.trim(),
+        );
+    if (success && mounted) {
+      final name = _nameController.text.trim();
+      if (name.isNotEmpty) {
+        // Fire-and-continue: save the name entered on this screen, but
+        // don't block navigation on it — failing to save the name
+        // shouldn't stop the user from getting into the app.
+        await ref.read(authProvider.notifier).updateProfile(username: name);
+      }
+      if (!mounted) return;
+      final onboardingDone = await ref.read(onboardingCompleteProvider.future);
+      if (!mounted) return;
+      context.go(onboardingDone ? RouteNames.home : RouteNames.onboardingWelcome);
+    }
+  }
+>>>>>>> 3cb5a6ec211f46c4bc31b1cbd4ba22d147c15624
 
   void _changeNumber() {
     ref.read(authProvider.notifier).resetOtpFlow();
@@ -68,7 +98,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
               Text('Welcome back', style: AppTextStyles.heading1),
               const SizedBox(height: 8),
               Text(
+<<<<<<< HEAD
                 authState.otpSent ? 'Enter the code sent to your phone' : 'Log in with your phone number',
+=======
+                authState.otpSent ? 'Enter the code sent to your phone' : 'Log in with your name and phone number',
+>>>>>>> 3cb5a6ec211f46c4bc31b1cbd4ba22d147c15624
                 style: AppTextStyles.caption,
               ),
               const SizedBox(height: 32),
@@ -79,6 +113,21 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       AppTextField(
+<<<<<<< HEAD
+=======
+                        controller: _nameController,
+                        label: 'Name',
+                        keyboardType: TextInputType.name,
+                        validator: (value) {
+                          if (value == null || value.trim().isEmpty) {
+                            return 'Name cannot be empty';
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 16),
+                      AppTextField(
+>>>>>>> 3cb5a6ec211f46c4bc31b1cbd4ba22d147c15624
                         controller: _phoneController,
                         label: 'Phone number',
                         keyboardType: TextInputType.phone,

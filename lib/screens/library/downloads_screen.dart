@@ -6,6 +6,10 @@ import 'package:Melora/core/theme/app_colors.dart';
 import 'package:Melora/models/song.dart';
 import 'package:Melora/providers/download_provider.dart';
 import 'package:Melora/providers/player_provider.dart';
+<<<<<<< HEAD
+=======
+import 'package:Melora/features/onboarding/widgets/common/mini_player_bar.dart';
+>>>>>>> 3cb5a6ec211f46c4bc31b1cbd4ba22d147c15624
 
 /// ---------------------------------------------------------------------
 /// DownloadsScreen
@@ -63,8 +67,14 @@ class DownloadsScreen extends ConsumerWidget {
         .map((info) => info.song!)
         .toList();
 
+<<<<<<< HEAD
     return Scaffold(
       backgroundColor: AppColors.background,
+=======
+  return Scaffold(
+      backgroundColor: AppColors.background,
+      bottomNavigationBar: const MiniPlayerBar(),
+>>>>>>> 3cb5a6ec211f46c4bc31b1cbd4ba22d147c15624
       appBar: AppBar(
         backgroundColor: AppColors.background,
         elevation: 0,

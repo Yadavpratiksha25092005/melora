@@ -21,7 +21,10 @@ class AccountSettingsScreen extends ConsumerStatefulWidget {
 }
 
 class _AccountSettingsScreenState extends ConsumerState<AccountSettingsScreen> {
+<<<<<<< HEAD
   String? _savedPasswordMask;
+=======
+>>>>>>> 3cb5a6ec211f46c4bc31b1cbd4ba22d147c15624
 
   void _showSnack(String message) {
     ScaffoldMessenger.of(context).hideCurrentSnackBar();
@@ -41,6 +44,7 @@ class _AccountSettingsScreenState extends ConsumerState<AccountSettingsScreen> {
     );
   }
 
+<<<<<<< HEAD
   void _changePassword() {
     final currentController = TextEditingController();
     final newController = TextEditingController();
@@ -101,6 +105,8 @@ class _AccountSettingsScreenState extends ConsumerState<AccountSettingsScreen> {
       ),
     );
   }
+=======
+>>>>>>> 3cb5a6ec211f46c4bc31b1cbd4ba22d147c15624
 
   void _closeAccount() {
     showDialog(
@@ -118,6 +124,7 @@ class _AccountSettingsScreenState extends ConsumerState<AccountSettingsScreen> {
             child: const Text('Cancel', style: TextStyle(color: Colors.white54)),
           ),
           TextButton(
+<<<<<<< HEAD
             onPressed: () async {
               Navigator.of(dialogContext).pop();
               await ref.read(authProvider.notifier).logout();
@@ -125,6 +132,11 @@ class _AccountSettingsScreenState extends ConsumerState<AccountSettingsScreen> {
                 Navigator.of(context).popUntil((route) => route.isFirst);
                 _showSnack('Account closed');
               }
+=======
+            onPressed: () {
+              Navigator.of(dialogContext).pop();
+              _showSnack('Account deletion isn\'t available yet — contact support');
+>>>>>>> 3cb5a6ec211f46c4bc31b1cbd4ba22d147c15624
             },
             child: const Text('Close account', style: TextStyle(color: Color(0xFFFF5C5C))),
           ),
@@ -159,6 +171,7 @@ class _AccountSettingsScreenState extends ConsumerState<AccountSettingsScreen> {
             ),
             trailing: const Icon(Icons.chevron_right, color: Colors.white38),
           ),
+<<<<<<< HEAD
           const Divider(color: Colors.white12, height: 1, indent: 20, endIndent: 20),
           ListTile(
             onTap: _changePassword,
@@ -169,6 +182,9 @@ class _AccountSettingsScreenState extends ConsumerState<AccountSettingsScreen> {
                 : null,
             trailing: const Icon(Icons.chevron_right, color: Colors.white38),
           ),
+=======
+        
+>>>>>>> 3cb5a6ec211f46c4bc31b1cbd4ba22d147c15624
           const Divider(color: Colors.white12, height: 1, indent: 20, endIndent: 20),
           ListTile(
             onTap: _closeAccount,
