@@ -1,0 +1,83 @@
+[
+  {
+    "id": "playlist_1",
+    "user_id": "user_1",
+    "name": "Arijit Singh Radio",
+    "cover_url": "https://loremflickr.com/400/400/singer,microphone,indianmusic",
+    "is_public": true,
+    "songs": [
+      "song_1",
+      "song_2",
+      "song_3",
+      "song_4"
+    ]
+  },
+  {
+    "id": "playlist_2",
+    "user_id": "user_1",
+    "name": "Trending Hindi Songs 2026",
+    "cover_url": "https://loremflickr.com/400/400/bollywood,trending,music",
+    "is_public": true,
+    "songs": [
+      "song_25",
+      "song_13",
+      "song_9",
+      "song_21",
+      "song_5"
+    ]
+  },
+  {
+    "id": "playlist_3",
+    "user_id": "user_1",
+    "name": "Armaan Malik Hits",
+    "cover_url": "https://loremflickr.com/400/400/singer,guitar,indianmusic",
+    "is_public": true,
+    "songs": [
+      "song_5",
+      "song_6",
+      "song_7",
+      "song_8"
+    ]
+  },
+  {
+    "id": "playlist_4",
+    "user_id": "user_1",
+    "name": "Party Anthems",
+    "cover_url": "https://loremflickr.com/400/400/bollywood,dance,poster",
+    "is_public": true,
+    "songs": [
+      "song_9",
+      "song_10",
+      "song_11",
+      "song_12",
+      "song_21"
+    ]
+  },
+  {
+    "id": "playlist_5",
+    "user_id": "user_1",
+    "name": "Lofi Flip Feels",
+    "cover_url": "https://loremflickr.com/400/400/lofi,headphones,mood",
+    "is_public": true,
+    "songs": [
+      "song_14",
+      "song_15",
+      "song_16",
+      "song_28"
+    ]
+  },
+  {
+    "id": "playlist_6",
+    "user_id": "user_1",
+    "name": "Classic Bollywood Romance",
+    "cover_url": "https://loremflickr.com/400/400/bollywood,classical,poster",
+    "is_public": true,
+    "songs": [
+      "song_17",
+      "song_18",
+      "song_29",
+      "song_30",
+      "song_32"
+    ]
+  }
+]

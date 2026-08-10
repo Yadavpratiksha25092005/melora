@@ -1,0 +1,76 @@
+openapi: 3.0.3
+info:
+  title: Spotify Clone API
+  version: 1.0.0
+servers:
+  - url: http://localhost:8080/api/v1
+paths:
+  /songs:
+    get:
+      summary: List songs
+      parameters:
+        - name: limit
+          in: query
+          schema:
+            type: integer
+        - name: offset
+          in: query
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: OK
+    post:
+      summary: Create a song
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateSongRequest"
+      responses:
+        "201":
+          description: Created
+  /songs/{id}:
+    get:
+      summary: Get a song by id
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+    delete:
+      summary: Delete a song
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+components:
+  schemas:
+    CreateSongRequest:
+      type: object
+      required: [artist_id, title]
+      properties:
+        album_id:
+          type: string
+        artist_id:
+          type: string
+        title:
+          type: string
+        duration_ms:
+          type: integer
+        file_url:
+          type: string
+        cover_url:
+          type: string
+        genre:
+          type: string

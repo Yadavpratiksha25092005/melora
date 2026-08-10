@@ -1,0 +1,62 @@
+[
+  {
+    "id": "pod_1",
+    "show_title": "The Samay Podcast",
+    "title": "Episode 1",
+    "cover_url": "assets/images/podcasts/episode_1.png",
+    "duration_label": "1:52",
+    "video_url": "asset:assets/videos/episode_1.mp4",
+    "show_host": "Samay Raina & Ravi Gupta",
+    "show_description": "Real conversations and stories, straight from your own recordings.",
+    "episode_description": "Samay Raina & Ravi Gupta Most Funniest \ud83d\ude02 Podcast Ever is not just a podcast episode\u2014it's a comedy event you absolutely cannot miss.\nFrom the very first minute, Samay Raina & Ravi Gupta Most Funniest \ud83d\ude02 Podcast Ever sets the tone with non-stop laughs, quick-witted jokes, and that iconic desi humour.\nThe way Samay kicks things off in Samay Raina & Ravi Gupta Most Funniest \ud83d\ude02 Podcast Ever with his signature sarcasm is enough to leave you in splits.\nRavi Gupta brings his unbeatable storytelling skills to Samay Raina & Ravi Gupta Most Funniest \ud83d\ude02 Podcast Ever, turning even the most random life moments into comedy gold.\nYou'll find yourself replaying moments from Samay Raina & Ravi Gupta Most Funniest \ud83d\ude02 Podcast Ever just to laugh all over again.\nEvery joke in Samay Raina & Ravi Gupta Most Funniest \ud83d\ude02 Podcast Ever lands harder than the last, proving their unbeatable comic chemistry.\nThere are no dull moments in Samay Raina & Ravi Gupta Most Funniest \ud83d\ude02 Podcast Ever\u2014just punchlines, roasts, and pure madness.\nSamay Raina & Ravi Gupta Most Funniest \ud83d\ude02 Podcast Ever is like having front-row seats to the funniest stand-up show, but from your couch.\nThe improv-style banter in Samay Raina & Ravi Gupta Most Funniest \ud83d\ude02 Podcast Ever feels so natural, you'll forget it's even a podcast.",
+    "chapters": [
+      { "title": "Intro", "duration_label": "0:00" },
+      { "title": "Main Discussion", "duration_label": "1:00" }
+    ]
+  },
+  {
+    "id": "pod_2",
+    "show_title": "Khatron Ke Khiladi 15",
+    "title": "Episode 2",
+    "cover_url": "assets/images/podcasts/episode_2.png",
+    "duration_label": "0:48",
+    "video_url": "asset:assets/videos/episode_2.mp4",
+    "show_host": "Bharti Singh",
+    "show_description": "Real conversations and stories, straight from your own recordings.",
+    "episode_description": "Darr ke naye daur mein Bharti ne khiladiyon ko diya laughter ka dose. \ud83d\ude02\ud83e\udee3\nDekhiye #KhatronKeKhiladi15, har Sat-Sun raat 9 baje, sirf #Colors aur #Jiohotstar par.\n#KhatronKeKhiladi #KKK #KKK15\n#RohitShetty #AvikaGor #AvinashMishra #FarrhanaBhatt #GauravKhanna #HarshGujral #JasminBhasin #KaranWahi #OrryAwatramani #RithvikDhanjani #RubinaDilaik #RuhaanikaDhawan #VishalSingh #ShagunSharma #BhartiSingh",
+    "chapters": [
+      { "title": "Intro", "duration_label": "0:00" },
+      { "title": "Main Discussion", "duration_label": "0:20" }
+    ]
+  },
+  {
+    "id": "pod_3",
+    "show_title": "Podcast promo of 2025",
+    "title": "Episode 3",
+    "cover_url": "assets/images/podcasts/episode_3.png",
+    "duration_label": "1:22",
+    "video_url": "asset:assets/videos/episode_3.mp4",
+    "show_host": "My Podcast",
+    "show_description": "Real conversations and stories, straight from your own recordings.",
+    "episode_description": "Full Podcast will be released soon\nDownload Indias Largest Edtech Platform in Homoeopathy - Magnum Opus App \ud83d\udc47\nhttps://play.google.co...",
+    "chapters": [
+      { "title": "Intro", "duration_label": "0:00" },
+      { "title": "Main Discussion", "duration_label": "0:25" }
+    ]
+  },
+  {
+    "id": "pod_4",
+    "show_title": "Beginner's Guide to create PODCAST TRAILER",
+    "title": "Episode 4",
+    "cover_url": "assets/images/podcasts/episode_4.png",
+    "duration_label": "12:29",
+    "video_url": "asset:assets/videos/episode_4.mp4",
+    "show_host": "Varun Dhawan ft. Ranveer Allahbadia",
+    "show_description": "Real conversations and stories, straight from your own recordings.",
+    "episode_description": "Check out our Video Editing Mastery Course - https://bbsh.co.in/bbs...\nIn this video, we break down the Varun Dhawan podcast trailer from @ranveerallahbadia episode 338 to show you how to craft a high-impact podcast trailer from scratch. Whether you're just learning how to start video editing, or looking for fresh podcast trailer ideas, this guide is packed with everything you need!\nFrom the tone of a podcast trailer, to the perfect sound effects and background music, we analyze what makes this trailer work so well and how you can apply the same tricks. Plus, we offer a podcast trailer template to help structure your own!\nWhat You'll Learn:\n1. How to make a podcast trailer that grabs attention?\n2. What to say in a podcast trailer to hook your audience?\n3. Examples of podcast trailers that work.\n4. The role of music and sound design in podcast intros.\n5. Video editing tips for beginners.",
+    "chapters": [
+      { "title": "Intro", "duration_label": "0:00" },
+      { "title": "Main Discussion", "duration_label": "0:30" }
+    ]
+  }
+]

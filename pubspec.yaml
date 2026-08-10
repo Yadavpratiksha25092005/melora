@@ -1,0 +1,92 @@
+name: Melora
+description: Melora — Feel Every Beat. A music streaming app built with Flutter.
+publish_to: "none"
+version: 1.0.0+1
+
+environment:
+  sdk: ">=3.3.0 <4.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.6
+
+  # state management
+  flutter_riverpod: ^2.5.1
+
+  # networking
+  dio: ^5.4.3
+  path_provider: ^2.1.4
+  share_plus: ^10.1.2
+  flutter_secure_storage: ^9.2.0
+
+  # audio
+  just_audio: ^0.9.38
+  audio_service: ^0.18.13
+
+  # requests the runtime POST_NOTIFICATIONS permission (Android 13+) so
+  # the lock-screen / notification media player actually shows up.
+  permission_handler: ^11.3.1
+
+  # resolves audio stream URLs from YouTube for songs that don't have a
+  # direct file_url (used for testing playback with real songs)
+  youtube_explode_dart: ^2.3.6
+
+  # podcast video playback (YouTube-hosted episodes)
+  youtube_player_iframe: ^5.2.0
+  url_launcher: ^6.3.1
+
+  # opens the phone's native Bluetooth settings screen (used by the
+  # mini player's "connect a device" button)
+  app_settings: ^8.0.3
+
+  # podcast video playback (direct-hosted video files — .mp4 etc, no
+  # YouTube/WebView dependency, so it isn't affected by YouTube's
+  # embed referrer restrictions)
+  video_player: ^2.9.2
+
+  # routing
+  go_router: ^14.1.4
+
+  # models / serialization
+  freezed_annotation: ^2.4.1
+  json_annotation: ^4.9.0
+
+  # ui utils
+  cached_network_image: ^3.3.1
+  shared_preferences: ^2.2.3
+  google_fonts: ^6.2.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^4.0.0
+  build_runner: ^2.4.9
+  freezed: ^2.5.2
+  json_serializable: ^6.8.0
+  mocktail: ^1.0.3
+  flutter_launcher_icons: ^0.14.1
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/images/
+    - assets/images/artists/
+    - assets/images/songs/
+    - assets/images/podcasts/
+    - assets/icons/
+    - assets/fonts/
+    - assets/animations/
+    - assets/dummy/
+    - assets/audio/
+    - assets/videos/
+
+# Run `flutter pub run flutter_launcher_icons` to regenerate app launcher
+# icons on Android/iOS from the Melora logo mark.
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: "assets/icons/app_icon.png"
+  min_sdk_android: 21
+  adaptive_icon_background: "#0A0A0A"
+  adaptive_icon_foreground: "assets/icons/app_icon_foreground.png"
