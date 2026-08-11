@@ -64,7 +64,7 @@ class DownloadsScreen extends ConsumerWidget {
         .map((info) => info.song!)
         .toList();
 
-  return Scaffold(
+    return Scaffold(
       backgroundColor: AppColors.background,
       bottomNavigationBar: const MiniPlayerBar(),
       appBar: AppBar(

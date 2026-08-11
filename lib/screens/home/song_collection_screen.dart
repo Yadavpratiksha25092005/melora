@@ -116,8 +116,15 @@ class SongCollectionScreen extends ConsumerWidget {
               onTap: () {
                 Navigator.pop(sheetContext);
                 final artist = song.artistName ?? song.artistId;
+                final videoId = song.youtubeVideoId;
+                final link = (videoId != null && videoId.isNotEmpty)
+                    ? 'https://youtube.com/watch?v=$videoId'
+                    : (song.fileUrl.startsWith('http') ? song.fileUrl : null);
+                final message = link != null
+                    ? '${song.title} by $artist — listen on Melora!\n$link'
+                    : '${song.title} by $artist — listen on Melora!';
                 Share.share(
-                  '${song.title} by $artist — listen on Melora!',
+                  message,
                   subject: song.title,
                 );
               },

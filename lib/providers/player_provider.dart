@@ -314,7 +314,7 @@ class PlayerNotifier extends StateNotifier<PlayerState> {
     }
   }
 
- Future<void> skipNext() async {
+  Future<void> skipNext() async {
     // In shuffle mode "next" can jump to any track in the queue, so the
     // sequential hasNext guard (which only checks currentIndex against
     // the end of the list) doesn't apply — only bail out here if the
