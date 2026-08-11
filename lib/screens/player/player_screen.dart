@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:Melora/services/youtube_audio_service.dart';
 
 import 'package:Melora/core/theme/app_colors.dart';
 import 'package:Melora/models/song.dart';
@@ -147,7 +149,7 @@ class PlayerScreen extends ConsumerWidget {
     }
   }
 
-  void _openQueueSheet(BuildContext context, PlayerState playerState) {
+  void _openQueueSheet(BuildContext context, WidgetRef ref, PlayerState playerState) {
     showModalBottomSheet(
       context: context,
       backgroundColor: const Color(0xFF15151C),
@@ -185,12 +187,49 @@ class PlayerScreen extends ConsumerWidget {
                     fontWeight: isCurrent ? FontWeight.w700 : FontWeight.w400,
                   ),
                 ),
+                onTap: () {
+                  ref.read(playerProvider.notifier).playQueueIndex(index);
+                  Navigator.pop(context);
+                },
               );
             },
           );
         },
       ),
     );
+  }
+
+  /// Shares the song straight to WhatsApp. Falls back to the system share
+  /// sheet if WhatsApp isn't installed.
+  Future<void> _handleWhatsAppShare(BuildContext context, Song song) async {
+    final artist = song.artistName ?? song.artistId;
+    String? link;
+
+    if (song.youtubeVideoId != null && song.youtubeVideoId!.isNotEmpty) {
+      link = 'https://youtube.com/watch?v=${song.youtubeVideoId}';
+    } else if (song.fileUrl.startsWith('http')) {
+      link = song.fileUrl;
+    } else {
+      final query = song.youtubeSearchQuery ?? '${song.title} $artist';
+      final videoId = await YoutubeAudioService.instance.searchVideoId(query);
+      if (videoId != null) {
+        link = 'https://youtube.com/watch?v=$videoId';
+      }
+    }
+
+    final message = link != null
+        ? 'Listening to "${song.title}" on Melora 🎵\n$link'
+        : 'Listening to "${song.title}" on Melora 🎵';
+
+    final text = Uri.encodeComponent(message);
+    final whatsappUri = Uri.parse('whatsapp://send?text=$text');
+    try {
+      final launched = await launchUrl(whatsappUri, mode: LaunchMode.externalApplication);
+      if (!launched) throw Exception('could not launch whatsapp');
+    } catch (_) {
+      // WhatsApp not installed / launch failed — fall back to generic share.
+      await Share.share(message);
+    }
   }
 
   Future<void> _handleDownload(BuildContext context, WidgetRef ref, Song song) async {
@@ -290,7 +329,10 @@ class PlayerScreen extends ConsumerWidget {
                         ],
                       ),
                     ),
-                   const SizedBox(width: 48),
+                    IconButton(
+                      icon: const Icon(Icons.more_vert_rounded, color: Colors.white),
+                      onPressed: () => _openQueueSheet(context, ref, playerState),
+                    ),
                   ],
                 ),
               ),
@@ -383,7 +425,7 @@ class PlayerScreen extends ConsumerWidget {
                           }
                         },
                         icon: Icon(
-                          isLiked ? Icons.check_circle_rounded : Icons.add_circle_outline_rounded,
+                          isLiked ? Icons.favorite_rounded : Icons.favorite_border_rounded,
                           color: isLiked ? const Color(0xFF1ED760) : Colors.white70,
                           size: 26,
                         ),
@@ -526,13 +568,11 @@ class PlayerScreen extends ConsumerWidget {
                       child: const Icon(Icons.bluetooth_rounded, color: Colors.white54, size: 20),
                     ),
                     GestureDetector(
-                      onTap: () {
-                        Share.share('Listening to "${song.title}" on Melora 🎵');
-                      },
+                      onTap: () => _handleWhatsAppShare(context, song),
                       child: const Icon(Icons.share_rounded, color: Colors.white54, size: 20),
                     ),
                     GestureDetector(
-                      onTap: () => _openQueueSheet(context, playerState),
+                      onTap: () => _openQueueSheet(context, ref, playerState),
                       child: const Icon(Icons.queue_music_rounded, color: Colors.white54, size: 20),
                     ),
                   ],
@@ -562,9 +602,24 @@ class PlayerScreen extends ConsumerWidget {
                       ),
                     ),
                     const SizedBox(height: 12),
-                    Text(
-                      song.genre?.isNotEmpty == true ? song.genre! : song.artistId,
-                      style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w700),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            song.genre?.isNotEmpty == true ? song.genre! : song.artistId,
+                            style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w700),
+                          ),
+                        ),
+                        OutlinedButton(
+                          onPressed: () => _showSnack(context, 'Following ${song.artistId}'),
+                          style: OutlinedButton.styleFrom(
+                            foregroundColor: Colors.white,
+                            side: const BorderSide(color: Colors.white38),
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                          ),
+                          child: const Text('Follow'),
+                        ),
+                      ],
                     ),
                     const SizedBox(height: 8),
                     Text(
@@ -936,3 +991,5 @@ class _SyncedLyricsViewState extends ConsumerState<_SyncedLyricsView> {
     );
   }
 }
+
+

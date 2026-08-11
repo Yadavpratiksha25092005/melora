@@ -9,7 +9,6 @@ import 'package:Melora/screens/settings/account_settings_screen.dart';
 import 'package:Melora/screens/settings/manage_storage_screen.dart';
 import 'package:Melora/screens/settings/settings_detail_screen.dart';
 import 'package:Melora/screens/settings/settings_info_screen.dart';
-import 'package:Melora/screens/auth/login_screen.dart';
 import 'package:go_router/go_router.dart';
 
 /// ---------------------------------------------------------------------

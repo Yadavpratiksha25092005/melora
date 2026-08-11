@@ -30,9 +30,10 @@ class YoutubeAudioService {
       final id = results.first.id.value;
       _videoIdCache[query] = id;
       return id;
-    } catch (_) {
-      return null;
-    }
+    } catch (e) {
+  print('[DEBUG] searchVideoId FAILED for "$query": $e');
+  return null;
+}
   }
 
   /// Extracts a direct, playable audio-only stream URL for [videoId].
@@ -47,9 +48,10 @@ class YoutubeAudioService {
       if (manifest.audioOnly.isEmpty) return null;
       final audioStream = manifest.audioOnly.withHighestBitrate();
       return audioStream.url.toString();
-    } catch (_) {
-      return null;
-    }
+    } catch (e) {
+  print('[DEBUG] getAudioStreamUrl FAILED for videoId "$videoId": $e');
+  return null;
+}
   }
 
   /// Convenience: given a search query, returns a ready-to-play stream URL

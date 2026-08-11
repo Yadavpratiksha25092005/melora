@@ -348,6 +348,21 @@ class PlayerNotifier extends StateNotifier<PlayerState> {
     await _playCurrent();
   }
 
+  /// Jumps straight to a specific song in the current queue (e.g. when
+  /// the user taps a track in the queue sheet) instead of stepping
+  /// through next/previous one at a time.
+  Future<void> playQueueIndex(int index) async {
+    if (index < 0 || index >= state.queue.length) return;
+    if (index == state.currentIndex) return;
+    state = state.copyWith(
+      currentIndex: index,
+      currentSong: state.queue[index],
+      position: Duration.zero,
+    );
+    _pushMediaItem(state.queue[index]);
+    await _playCurrent();
+  }
+
   int _randomIndexExcluding(int exclude) {
     if (state.queue.length <= 1) return exclude;
     final indices = List.generate(state.queue.length, (i) => i)

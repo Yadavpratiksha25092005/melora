@@ -4,7 +4,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:Melora/core/theme/app_colors.dart';
 import 'package:Melora/providers/auth_provider.dart';
 import 'package:Melora/providers/updates_provider.dart';
-import 'package:Melora/screens/auth/login_screen.dart';
 import 'package:Melora/screens/profile/profile_screen.dart';
 import 'package:Melora/screens/settings/settings_screen.dart';
 import 'package:Melora/screens/updates/updates_screen.dart';

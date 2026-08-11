@@ -299,6 +299,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                 return SizedBox(
                                   width: 78,
                                   child: GestureDetector(
+                                    behavior: HitTestBehavior.opaque,
                                     onTap: () {
                                       final artistSongs = sortedSongs
                                           .where((s) =>
@@ -362,12 +363,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                             ),
                           artistsRow(),
                           if (sortedSongs.length > 4)
-                            SliverPadding(
-                              padding: const EdgeInsets.fromLTRB(20, 18, 20, 0),
+                            const SliverPadding(
+                              padding: EdgeInsets.fromLTRB(20, 18, 20, 0),
                               sliver: SliverToBoxAdapter(
                                 child: Text(
                                   'Try something else',
-                                  style: const TextStyle(
+                                  style: TextStyle(
                                     color: Colors.white,
                                     fontSize: 19,
                                     fontWeight: FontWeight.w800,
@@ -574,6 +575,7 @@ class _HomeHeader extends ConsumerWidget {
           ),
           const SizedBox(width: 12),
           GestureDetector(
+            behavior: HitTestBehavior.opaque,
             onTap: onBellTap,
             child: Stack(
               clipBehavior: Clip.none,
@@ -628,6 +630,7 @@ class _FilterPill extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
+      behavior: HitTestBehavior.opaque,
       onTap: onTap,
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 180),
@@ -680,6 +683,7 @@ class _SectionHeader extends StatelessWidget {
             ),
           ),
           GestureDetector(
+            behavior: HitTestBehavior.opaque,
             onTap: onSeeAll,
             child: const Text(
               'See All',
@@ -751,6 +755,7 @@ class _SongGridTile extends StatelessWidget {
         );
 
     return GestureDetector(
+      behavior: HitTestBehavior.opaque,
       onTap: onTap,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -904,6 +909,7 @@ class _PosterRow extends StatelessWidget {
         itemBuilder: (context, index) {
           final song = section.songs[index];
           return GestureDetector(
+            behavior: HitTestBehavior.opaque,
             onTap: () => onTap(song),
             onLongPress: () => onLongPress(song),
             child: SizedBox(
@@ -991,6 +997,7 @@ class _ClassicsGridSection extends StatelessWidget {
         itemBuilder: (context, index) {
           final song = section.songs[index];
           return GestureDetector(
+            behavior: HitTestBehavior.opaque,
             onTap: () => onTap(song),
             onLongPress: () => onLongPress(song),
             child: Container(
@@ -1025,6 +1032,7 @@ class _ClassicsGridSection extends StatelessWidget {
                     ),
                   ),
                   GestureDetector(
+                    behavior: HitTestBehavior.opaque,
                     onTap: () => onTap(song),
                     child: Container(
                       width: 30,
@@ -1073,6 +1081,7 @@ class _ClassicsCarousel extends StatelessWidget {
         itemBuilder: (context, index) {
           final song = section.songs[index];
           return GestureDetector(
+            behavior: HitTestBehavior.opaque,
             onTap: () => onTap(song),
             onLongPress: () => onLongPress(song),
             child: SizedBox(
@@ -1175,6 +1184,7 @@ class _SeeAllScreen extends StatelessWidget {
         itemBuilder: (context, index) {
           final song = section.songs[index];
           return GestureDetector(
+            behavior: HitTestBehavior.opaque,
             onTap: () => onSongTap(song),
             onLongPress: () => onSongLongPress(song),
             child: Row(
@@ -1202,6 +1212,7 @@ class _SeeAllScreen extends StatelessWidget {
                   ),
                 ),
                 GestureDetector(
+                  behavior: HitTestBehavior.opaque,
                   onTap: () => onSongTap(song),
                   child: Container(
                     width: 36,

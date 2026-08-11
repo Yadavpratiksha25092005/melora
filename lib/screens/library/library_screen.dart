@@ -200,6 +200,7 @@ class _LibraryHeader extends StatelessWidget {
             ),
           ),
           GestureDetector(
+            behavior: HitTestBehavior.opaque,
             onTap: onSearchTap,
             child: const Padding(
               padding: EdgeInsets.only(right: 20),
@@ -207,6 +208,7 @@ class _LibraryHeader extends StatelessWidget {
             ),
           ),
           GestureDetector(
+            behavior: HitTestBehavior.opaque,
             onTap: onAddTap,
             child: const Icon(Icons.add, color: Colors.white, size: 26),
           ),
@@ -237,6 +239,7 @@ class _LibraryFilterChips extends StatelessWidget {
           return Padding(
             padding: const EdgeInsets.only(right: 10),
             child: GestureDetector(
+              behavior: HitTestBehavior.opaque,
               onTap: () => onSelected(isSelected ? _LibraryFilter.all : chip.$1),
               child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -280,6 +283,7 @@ class _RecentsHeader extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           GestureDetector(
+            behavior: HitTestBehavior.opaque,
             onTap: onSortTap,
             child: const Row(
               children: [
@@ -293,6 +297,7 @@ class _RecentsHeader extends StatelessWidget {
             ),
           ),
           GestureDetector(
+            behavior: HitTestBehavior.opaque,
             onTap: onLayoutToggle,
             child: Icon(
               gridView ? Icons.view_list_rounded : Icons.grid_view_rounded,
@@ -370,6 +375,7 @@ class _LibraryListTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
+      behavior: HitTestBehavior.opaque,
       onTap: onTap,
       child: Row(
         children: [
@@ -424,6 +430,7 @@ class _LibraryGridTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
+      behavior: HitTestBehavior.opaque,
       onTap: onTap,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

@@ -6,24 +6,11 @@ import 'package:Melora/core/utils/local_poster_catalog.dart';
 import 'package:Melora/providers/player_provider.dart';
 import 'package:Melora/models/song.dart';
 import 'package:Melora/providers/song_provider.dart';
-import 'package:Melora/screens/home/curated_songs_data.dart';
-import 'package:Melora/screens/home/curated_songs_resolver.dart';
 import 'package:Melora/screens/home/home_screen.dart' show genreGradient;
 import 'package:Melora/screens/home/song_collection_screen.dart';
 import 'package:Melora/screens/search/search_category_screen.dart';
 import 'package:Melora/screens/podcasts/podcast_feed_screen.dart';
 import 'package:Melora/features/onboarding/widgets/common/profile_avatar_button.dart';
-
-/// ---------------------------------------------------------------------
-/// NOTE
-/// Layout follows the reference screenshot (avatar + title,
-/// search field, colorful category grid, "Discover something new" row)
-/// but keeps your existing dark theme colors instead of introducing new
-/// ones. The category grid uses music-app-appropriate categories
-/// (Music / Podcasts / Live Events / Top Charts) instead of any
-/// third-party branding, and there's no ad card — swap in your own
-/// promo/ad widget there if you have one.
-/// ---------------------------------------------------------------------
 
 class SearchScreen extends ConsumerStatefulWidget {
   const SearchScreen({super.key});
@@ -35,7 +22,17 @@ class SearchScreen extends ConsumerStatefulWidget {
 class _SearchScreenState extends ConsumerState<SearchScreen> {
   final TextEditingController _searchController = TextEditingController();
   String _query = '';
-  List<CuratedSong> get _results => searchCuratedSongs(_query);
+
+  List<Song> _filterSongs(List<Song> allSongs) {
+    final q = _query.trim().toLowerCase();
+    if (q.isEmpty) return [];
+    return allSongs.where((s) {
+      final title = s.title.toLowerCase();
+      final artist = (s.artistName ?? '').toLowerCase();
+      final genre = (s.genre ?? '').toLowerCase();
+      return title.contains(q) || artist.contains(q) || genre.contains(q);
+    }).toList();
+  }
 
   static const List<_CategoryData> _categories = [
     _CategoryData(
@@ -52,8 +49,6 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
     ),
   ];
 
-  // Only languages/genres that actually have songs available in the app
-  // (matches the genres present in assets/dummy/songs.json).
   static const List<String> _languages = [
     'Hindi',
     'Bollywood',
@@ -79,25 +74,6 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
     );
   }
 
-  static const List<_DiscoverData> _discover = [
-    _DiscoverData(
-      title: 'Trending Hindi Songs 2026',
-      imageUrl: 'https://loremflickr.com/400/400/bollywood,trending,music',
-    ),
-    _DiscoverData(
-      title: 'Party Anthems',
-      imageUrl: 'https://loremflickr.com/400/400/bollywood,dance,poster',
-    ),
-    _DiscoverData(
-      title: 'Classic Bollywood Romance',
-      imageUrl: 'https://loremflickr.com/400/400/bollywood,classical,poster',
-    ),
-    _DiscoverData(
-      title: 'Lofi Flip Feels',
-      imageUrl: 'https://loremflickr.com/400/400/lofi,headphones,mood',
-    ),
-  ];
-
   @override
   void dispose() {
     _searchController.dispose();
@@ -114,11 +90,9 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
     );
   }
 
-  void _playFromResults(CuratedSong song) {
-    final results = _results;
+  void _playFromResults(Song song, List<Song> results) {
     final index = results.indexWhere((s) => s.id == song.id);
-    final queue = results.map(buildSongFromCurated).toList();
-    ref.read(playerProvider.notifier).playQueue(queue, index >= 0 ? index : 0);
+    ref.read(playerProvider.notifier).playQueue(results, index >= 0 ? index : 0);
     _showSnack('Playing "${song.title}"');
   }
 
@@ -142,115 +116,130 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
               ),
             ),
             if (_query.trim().isNotEmpty) ...[
-              if (_results.isEmpty)
-                const SliverToBoxAdapter(
-                  child: Padding(
-                    padding: EdgeInsets.fromLTRB(20, 24, 20, 24),
-                    child: Text(
-                      'No songs found. Try a different title, artist, or genre.',
-                      style: TextStyle(color: Colors.white54, fontSize: 14),
+              Consumer(builder: (context, ref, _) {
+                final songsAsync = ref.watch(allSongsProvider);
+                return songsAsync.when(
+                  loading: () => const SliverToBoxAdapter(
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(vertical: 40),
+                      child: Center(child: CircularProgressIndicator()),
                     ),
                   ),
-                )
-              else
-                SliverPadding(
-                  padding: const EdgeInsets.fromLTRB(20, 8, 20, 24),
-                  sliver: SliverList(
-                    delegate: SliverChildBuilderDelegate(
-                      (context, index) {
-                        final song = _results[index];
-                        return _SearchResultTile(
-                          song: song,
-                          onTap: () => _playFromResults(song),
-                        );
-                      },
-                      childCount: _results.length,
-                    ),
-                  ),
-                ),
-            ] else ...[
-            SliverPadding(
-              padding: const EdgeInsets.fromLTRB(20, 8, 20, 4),
-              sliver: SliverGrid(
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  mainAxisSpacing: 14,
-                  crossAxisSpacing: 14,
-                  childAspectRatio: 1.9,
-                ),
-                delegate: SliverChildBuilderDelegate(
-                  (context, index) {
-                    final category = _categories[index];
-                    return _CategoryCard(
-                      data: category,
-                      onTap: () {
-                        if (category.category == SearchTopCategory.podcasts) {
-                          Navigator.of(context).push(
-                            MaterialPageRoute(builder: (_) => const PodcastFeedScreen()),
-                          );
-                          return;
-                        }
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (_) => SearchCategoryScreen(category: category.category),
+                  error: (e, st) => const SliverToBoxAdapter(child: SizedBox.shrink()),
+                  data: (allSongs) {
+                    final results = _filterSongs(allSongs);
+                    if (results.isEmpty) {
+                      return const SliverToBoxAdapter(
+                        child: Padding(
+                          padding: EdgeInsets.fromLTRB(20, 24, 20, 24),
+                          child: Text(
+                            'No songs found. Try a different title, artist, or genre.',
+                            style: TextStyle(color: Colors.white54, fontSize: 14),
                           ),
-                        );
-                      },
+                        ),
+                      );
+                    }
+                    return SliverPadding(
+                      padding: const EdgeInsets.fromLTRB(20, 8, 20, 24),
+                      sliver: SliverList(
+                        delegate: SliverChildBuilderDelegate(
+                          (context, index) {
+                            final song = results[index];
+                            return _SearchResultTile(
+                              song: song,
+                              onTap: () => _playFromResults(song, results),
+                            );
+                          },
+                          childCount: results.length,
+                        ),
+                      ),
                     );
                   },
-                  childCount: _categories.length,
-                ),
-              ),
-            ),
-            const SliverToBoxAdapter(
-              child: Padding(
-                padding: EdgeInsets.fromLTRB(20, 4, 20, 12),
-                child: Text(
-                  'Browse by Language',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 19,
-                    fontWeight: FontWeight.w800,
+                );
+              }),
+            ] else ...[
+              SliverPadding(
+                padding: const EdgeInsets.fromLTRB(20, 8, 20, 4),
+                sliver: SliverGrid(
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    mainAxisSpacing: 14,
+                    crossAxisSpacing: 14,
+                    childAspectRatio: 1.9,
+                  ),
+                  delegate: SliverChildBuilderDelegate(
+                    (context, index) {
+                      final category = _categories[index];
+                      return _CategoryCard(
+                        data: category,
+                        onTap: () {
+                          if (category.category == SearchTopCategory.podcasts) {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(builder: (_) => const PodcastFeedScreen()),
+                            );
+                            return;
+                          }
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (_) => SearchCategoryScreen(category: category.category),
+                            ),
+                          );
+                        },
+                      );
+                    },
+                    childCount: _categories.length,
                   ),
                 ),
               ),
-            ),
-            Consumer(builder: (context, ref, _) {
-              final songsAsync = ref.watch(allSongsProvider);
-              return songsAsync.when(
-                loading: () => const SliverToBoxAdapter(child: SizedBox.shrink()),
-                error: (e, st) => const SliverToBoxAdapter(child: SizedBox.shrink()),
-                data: (allSongs) => SliverPadding(
-                  padding: const EdgeInsets.fromLTRB(20, 0, 20, 4),
-                  sliver: SliverGrid(
-                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
-                      mainAxisSpacing: 14,
-                      crossAxisSpacing: 14,
-                      childAspectRatio: 1.9,
-                    ),
-                    delegate: SliverChildBuilderDelegate(
-                      (context, index) {
-                        final genre = _languages[index];
-                        final colors = genreGradient[genre] ??
-                            const [Color(0xFF3B2E7D), Color(0xFF14103A)];
-                        return _CategoryCard(
-                          data: _CategoryData(
-                            title: genre,
-                            colors: colors,
-                            icon: Icons.language_rounded,
-                            category: SearchTopCategory.music,
-                          ),
-                          onTap: () => _openLanguage(genre, allSongs),
-                        );
-                      },
-                      childCount: _languages.length,
+              const SliverToBoxAdapter(
+                child: Padding(
+                  padding: EdgeInsets.fromLTRB(20, 4, 20, 12),
+                  child: Text(
+                    'Browse by Language',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 19,
+                      fontWeight: FontWeight.w800,
                     ),
                   ),
                 ),
-              );
-            }),
-            const SliverToBoxAdapter(child: SizedBox(height: 24)),
+              ),
+              Consumer(builder: (context, ref, _) {
+                final songsAsync = ref.watch(allSongsProvider);
+                return songsAsync.when(
+                  loading: () => const SliverToBoxAdapter(child: SizedBox.shrink()),
+                  error: (e, st) => const SliverToBoxAdapter(child: SizedBox.shrink()),
+                  data: (allSongs) => SliverPadding(
+                    padding: const EdgeInsets.fromLTRB(20, 0, 20, 4),
+                    sliver: SliverGrid(
+                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 2,
+                        mainAxisSpacing: 14,
+                        crossAxisSpacing: 14,
+                        childAspectRatio: 1.9,
+                      ),
+                      delegate: SliverChildBuilderDelegate(
+                        (context, index) {
+                          final genre = _languages[index];
+                          final colors = genreGradient[genre] ??
+                              const [Color(0xFF3B2E7D), Color(0xFF14103A)];
+                          return _CategoryCard(
+                            data: _CategoryData(
+                              title: genre,
+                              colors: colors,
+                              icon: Icons.language_rounded,
+                              category: SearchTopCategory.music,
+                            ),
+                            onTap: () => _openLanguage(genre, allSongs),
+                          );
+                        },
+                        childCount: _languages.length,
+                      ),
+                    ),
+                  ),
+                );
+              }),
+              const SliverToBoxAdapter(child: SizedBox(height: 24)),
             ],
           ],
         ),
@@ -259,9 +248,6 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
   }
 }
 
-/// ---------------------------------------------------------------------
-/// Header: avatar + "Search" title
-/// ---------------------------------------------------------------------
 class _SearchHeader extends StatelessWidget {
   const _SearchHeader();
 
@@ -289,9 +275,6 @@ class _SearchHeader extends StatelessWidget {
   }
 }
 
-/// ---------------------------------------------------------------------
-/// Search input field
-/// ---------------------------------------------------------------------
 class _SearchField extends StatelessWidget {
   final TextEditingController controller;
   final ValueChanged<String> onSubmitted;
@@ -330,6 +313,7 @@ class _SearchField extends StatelessWidget {
             ),
             if (controller.text.isNotEmpty)
               GestureDetector(
+                behavior: HitTestBehavior.opaque,
                 onTap: () {
                   controller.clear();
                   onChanged?.call('');
@@ -343,10 +327,8 @@ class _SearchField extends StatelessWidget {
   }
 }
 
-/// A single row in the live search results list — tapping plays that song
-/// (with the rest of the results as its queue, so next/previous work).
 class _SearchResultTile extends StatelessWidget {
-  final CuratedSong song;
+  final Song song;
   final VoidCallback onTap;
 
   const _SearchResultTile({required this.song, required this.onTap});
@@ -354,7 +336,9 @@ class _SearchResultTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final poster = localPosterForTitle(song.title);
+    final cover = song.coverUrl;
     return GestureDetector(
+      behavior: HitTestBehavior.opaque,
       onTap: onTap,
       child: Padding(
         padding: const EdgeInsets.only(bottom: 14),
@@ -374,10 +358,19 @@ class _SearchResultTile extends StatelessWidget {
                           child: const Icon(Icons.music_note, color: Colors.white24),
                         ),
                       )
-                    : Container(
-                        color: AppColors.surface,
-                        child: const Icon(Icons.music_note, color: Colors.white24),
-                      ),
+                    : (cover != null && cover.isNotEmpty && cover.startsWith('http'))
+                        ? Image.network(
+                            cover,
+                            fit: BoxFit.cover,
+                            errorBuilder: (_, __, ___) => Container(
+                              color: AppColors.surface,
+                              child: const Icon(Icons.music_note, color: Colors.white24),
+                            ),
+                          )
+                        : Container(
+                            color: AppColors.surface,
+                            child: const Icon(Icons.music_note, color: Colors.white24),
+                          ),
               ),
             ),
             const SizedBox(width: 14),
@@ -394,7 +387,7 @@ class _SearchResultTile extends StatelessWidget {
                   ),
                   const SizedBox(height: 2),
                   Text(
-                    song.category,
+                    song.artistName ?? song.genre ?? '',
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: const TextStyle(color: Colors.white38, fontSize: 12),
@@ -410,9 +403,6 @@ class _SearchResultTile extends StatelessWidget {
   }
 }
 
-/// ---------------------------------------------------------------------
-/// Category card (Music / Podcasts / Live Events / Top Charts)
-/// ---------------------------------------------------------------------
 class _CategoryData {
   final String title;
   final List<Color> colors;
@@ -436,6 +426,7 @@ class _CategoryCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
+      behavior: HitTestBehavior.opaque,
       onTap: onTap,
       child: Container(
         padding: const EdgeInsets.all(14),
@@ -479,9 +470,6 @@ class _CategoryCard extends StatelessWidget {
   }
 }
 
-/// ---------------------------------------------------------------------
-/// Discover something new — horizontal poster row
-/// ---------------------------------------------------------------------
 class _DiscoverData {
   final String title;
   final String imageUrl;
@@ -507,6 +495,7 @@ class _DiscoverRow extends StatelessWidget {
         itemBuilder: (context, index) {
           final item = items[index];
           return GestureDetector(
+            behavior: HitTestBehavior.opaque,
             onTap: () => onTap(item.title),
             child: ClipRRect(
               borderRadius: BorderRadius.circular(12),

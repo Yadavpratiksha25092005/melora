@@ -142,11 +142,11 @@ class MiniPlayerBar extends ConsumerWidget {
                       );
                       return IconButton(
                         visualDensity: VisualDensity.compact,
-                        icon: Icon(
-                          isLiked ? Icons.check_circle_rounded : Icons.add_rounded,
-                          color: isLiked ? const Color(0xFF1ED760) : AppColors.textSecondary,
-                          size: 20,
-                        ),
+                       icon: Icon(
+  isLiked ? Icons.favorite_rounded : Icons.favorite_border_rounded,
+  color: isLiked ? const Color(0xFF1ED760) : AppColors.textSecondary,
+  size: 20,
+),
                         onPressed: () {
                           if (isLiked) {
                             ref.read(likedSongsProvider.notifier).remove(song.id);

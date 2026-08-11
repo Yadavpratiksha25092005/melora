@@ -73,6 +73,7 @@ class _FollowButton extends ConsumerWidget {
     );
 
     return GestureDetector(
+      behavior: HitTestBehavior.opaque,
       onTap: () {
         final notifier = ref.read(followedArtistsProvider.notifier);
         if (isFollowing) {
@@ -288,6 +289,7 @@ class LibraryDetailScreen extends ConsumerWidget {
                   Row(
                     children: [
                       GestureDetector(
+                        behavior: HitTestBehavior.opaque,
                         onTap: handlePlayButtonTap,
                         child: Container(
                           width: 54,
@@ -334,6 +336,7 @@ class LibraryDetailScreen extends ConsumerWidget {
                     return Padding(
                       padding: const EdgeInsets.only(bottom: 16),
                       child: GestureDetector(
+                        behavior: HitTestBehavior.opaque,
                         onTap: () => ref
                             .read(playerProvider.notifier)
                             .playQueue(likedSongs, index),
@@ -396,6 +399,7 @@ class LibraryDetailScreen extends ConsumerWidget {
                     return Padding(
                       padding: const EdgeInsets.only(bottom: 16),
                       child: GestureDetector(
+                        behavior: HitTestBehavior.opaque,
                         onTap: () => ref
                             .read(playerProvider.notifier)
                             .playQueue(customPlaylistSongs, index),
@@ -476,6 +480,7 @@ class LibraryDetailScreen extends ConsumerWidget {
                             return Padding(
                               padding: const EdgeInsets.only(bottom: 16),
                               child: GestureDetector(
+                                behavior: HitTestBehavior.opaque,
                                 onTap: () => ref
                                     .read(playerProvider.notifier)
                                     .playQueue(songs, index),
@@ -524,6 +529,7 @@ class LibraryDetailScreen extends ConsumerWidget {
                   return Padding(
                     padding: const EdgeInsets.only(bottom: 16),
                     child: GestureDetector(
+                      behavior: HitTestBehavior.opaque,
                       onTap: () => _showSnack(context, 'Playing "${track.title}"'),
                       child: Row(
                         children: [

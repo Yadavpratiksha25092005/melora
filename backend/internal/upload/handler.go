@@ -31,6 +31,10 @@ func (h *Handler) UploadImage(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) uploadFile(w http.ResponseWriter, r *http.Request, fieldName, folder string) {
+	if h.s3Client == nil {
+		response.Error(w, http.StatusServiceUnavailable, "STORAGE_UNAVAILABLE", "file storage is not configured on this server")
+		return
+	}
 	r.Body = http.MaxBytesReader(w, r.Body, maxUploadSize)
 	if err := r.ParseMultipartForm(maxUploadSize); err != nil {
 		response.Error(w, http.StatusBadRequest, "FILE_TOO_LARGE", "file exceeds 50MB limit")
