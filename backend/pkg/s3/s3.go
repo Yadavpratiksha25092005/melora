@@ -2,8 +2,9 @@ package s3
 
 import (
 	"context"
-	"fmt"
 	"mime/multipart"
+	"net/url"
+	"time"
 
 	"github.com/minio/minio-go/v7"
 	"github.com/minio/minio-go/v7/pkg/credentials"
@@ -33,16 +34,7 @@ func NewClient(endpoint, accessKey, secretKey, bucket string, useSSL bool) (*Cli
 		if err := mc.MakeBucket(ctx, bucket, minio.MakeBucketOptions{}); err != nil {
 			return nil, err
 		}
-		policy := fmt.Sprintf(`{
-			"Version": "2012-10-17",
-			"Statement": [{
-				"Effect": "Allow",
-				"Principal": {"AWS": ["*"]},
-				"Action": ["s3:GetObject"],
-				"Resource": ["arn:aws:s3:::%s/*"]
-			}]
-		}`, bucket)
-		_ = mc.SetBucketPolicy(ctx, bucket, policy)
+
 	}
 
 	return &Client{minio: mc, bucket: bucket, publicHost: endpoint}, nil
@@ -55,5 +47,13 @@ func (c *Client) Upload(ctx context.Context, key string, file multipart.File, si
 	if err != nil {
 		return "", err
 	}
-	return fmt.Sprintf("http://%s/%s/%s", c.publicHost, c.bucket, key), nil
+	return key, nil // return the object key, not a public URL
+}
+func (c *Client) GetPresignedURL(ctx context.Context, key string, expiry time.Duration) (string, error) {
+	reqParams := make(url.Values)
+	presignedURL, err := c.minio.PresignedGetObject(ctx, c.bucket, key, expiry, reqParams)
+	if err != nil {
+		return "", err
+	}
+	return presignedURL.String(), nil
 }
