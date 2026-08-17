@@ -15,7 +15,7 @@ func main() {
 	db := database.Connect(cfg.DatabaseURL)
 	defer db.Close()
 
-	s3Client, err := s3.NewClient(cfg.S3Endpoint, cfg.S3AccessKey, cfg.S3SecretKey, cfg.S3Bucket, true)
+	s3Client, err := s3.NewClient(cfg.S3Endpoint, cfg.S3AccessKey, cfg.S3SecretKey, cfg.S3Bucket, false)
 	if err != nil {
 		log.Printf("warning: unable to connect to MinIO/S3, file uploads will be disabled: %v", err)
 		s3Client = nil

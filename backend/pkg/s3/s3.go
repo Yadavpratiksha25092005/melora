@@ -2,6 +2,7 @@ package s3
 
 import (
 	"context"
+	"fmt"
 	"mime/multipart"
 	"net/url"
 	"time"
@@ -14,6 +15,7 @@ type Client struct {
 	minio      *minio.Client
 	bucket     string
 	publicHost string // e.g. "localhost:9000" — used to build public URLs
+	scheme     string // "http" or "https" — matches useSSL, used for public URLs
 }
 
 func NewClient(endpoint, accessKey, secretKey, bucket string, useSSL bool) (*Client, error) {
@@ -37,7 +39,12 @@ func NewClient(endpoint, accessKey, secretKey, bucket string, useSSL bool) (*Cli
 
 	}
 
-	return &Client{minio: mc, bucket: bucket, publicHost: endpoint}, nil
+	scheme := "http"
+	if useSSL {
+		scheme = "https"
+	}
+
+	return &Client{minio: mc, bucket: bucket, publicHost: endpoint, scheme: scheme}, nil
 }
 
 func (c *Client) Upload(ctx context.Context, key string, file multipart.File, size int64, contentType string) (string, error) {
@@ -47,8 +54,9 @@ func (c *Client) Upload(ctx context.Context, key string, file multipart.File, si
 	if err != nil {
 		return "", err
 	}
-	return key, nil // return the object key, not a public URL
+	return fmt.Sprintf("%s://%s/%s/%s", c.scheme, c.publicHost, c.bucket, key), nil
 }
+
 func (c *Client) GetPresignedURL(ctx context.Context, key string, expiry time.Duration) (string, error) {
 	reqParams := make(url.Values)
 	presignedURL, err := c.minio.PresignedGetObject(ctx, c.bucket, key, expiry, reqParams)
