@@ -3,6 +3,8 @@ package song
 import (
 	"context"
 	"errors"
+	"net/url"
+	"strings"
 	"time"
 
 	"spotify-clone-backend/pkg/s3"
@@ -25,6 +27,23 @@ func NewService(repo Repository, s3Client *s3.Client) Service {
 	return &service{repo: repo, s3Client: s3Client}
 }
 
+// extractS3Key pulls the object key back out of a full stored URL like
+// "https://host/{bucket}/{key...}" — GetPresignedURL already prepends
+// the bucket itself, so passing it the full URL (instead of just the
+// key) doubled the path and produced broken, nested "signed" URLs.
+func extractS3Key(rawURL string) string {
+	u, err := url.Parse(rawURL)
+	if err != nil {
+		return rawURL
+	}
+	path := strings.TrimPrefix(u.Path, "/")
+	parts := strings.SplitN(path, "/", 2)
+	if len(parts) == 2 {
+		return parts[1] // everything after the {bucket}/ segment
+	}
+	return path
+}
+
 // resolveURLs turns stored object keys into temporary, signed URLs the
 // browser/app can actually fetch, since the bucket is private.
 func (s *service) resolveURLs(ctx context.Context, res *SongResponse) {
@@ -32,12 +51,14 @@ func (s *service) resolveURLs(ctx context.Context, res *SongResponse) {
 		return
 	}
 	if res.FileURL != "" {
-		if signed, err := s.s3Client.GetPresignedURL(ctx, res.FileURL, time.Hour); err == nil {
+		key := extractS3Key(res.FileURL)
+		if signed, err := s.s3Client.GetPresignedURL(ctx, key, time.Hour); err == nil {
 			res.FileURL = signed
 		}
 	}
 	if res.CoverURL != "" {
-		if signed, err := s.s3Client.GetPresignedURL(ctx, res.CoverURL, time.Hour); err == nil {
+		key := extractS3Key(res.CoverURL)
+		if signed, err := s.s3Client.GetPresignedURL(ctx, key, time.Hour); err == nil {
 			res.CoverURL = signed
 		}
 	}
