@@ -54,7 +54,7 @@ func (c *Client) Upload(ctx context.Context, key string, file multipart.File, si
 	if err != nil {
 		return "", err
 	}
-	return fmt.Sprintf("%s://%s/%s/%s", c.scheme, c.publicHost, c.bucket, key), nil
+	return fmt.Sprintf("https://%s/%s/%s", c.publicHost, c.bucket, key), nil
 }
 
 func (c *Client) GetPresignedURL(ctx context.Context, key string, expiry time.Duration) (string, error) {
