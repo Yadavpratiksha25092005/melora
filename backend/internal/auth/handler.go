@@ -16,33 +16,48 @@ func NewHandler(service Service) *Handler {
 	return &Handler{service: service}
 }
 
-// POST /auth/otp/send
-func (h *Handler) SendOTP(w http.ResponseWriter, r *http.Request) {
-	var req SendOTPRequest
+// POST /auth/signup
+func (h *Handler) Signup(w http.ResponseWriter, r *http.Request) {
+	var req SignupRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		response.Error(w, http.StatusBadRequest, "INVALID_BODY", "could not parse request body")
 		return
 	}
-	if err := h.service.SendOTP(r.Context(), req); err != nil {
-		response.Error(w, http.StatusBadRequest, "SEND_OTP_FAILED", err.Error())
-		return
-	}
-	response.JSON(w, http.StatusOK, map[string]string{"message": "OTP sent"})
-}
-
-// POST /auth/otp/verify
-func (h *Handler) VerifyOTP(w http.ResponseWriter, r *http.Request) {
-	var req VerifyOTPRequest
-	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		response.Error(w, http.StatusBadRequest, "INVALID_BODY", "could not parse request body")
-		return
-	}
-	res, err := h.service.VerifyOTP(r.Context(), req)
+	res, err := h.service.Signup(r.Context(), req)
 	if err != nil {
-		response.Error(w, http.StatusUnauthorized, "INVALID_OTP", err.Error())
+		response.Error(w, http.StatusBadRequest, "SIGNUP_FAILED", err.Error())
 		return
 	}
 	response.JSON(w, http.StatusOK, res)
+}
+
+// POST /auth/login
+func (h *Handler) Login(w http.ResponseWriter, r *http.Request) {
+	var req LoginRequest
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		response.Error(w, http.StatusBadRequest, "INVALID_BODY", "could not parse request body")
+		return
+	}
+	res, err := h.service.Login(r.Context(), req)
+	if err != nil {
+		response.Error(w, http.StatusUnauthorized, "LOGIN_FAILED", err.Error())
+		return
+	}
+	response.JSON(w, http.StatusOK, res)
+}
+
+// POST /auth/forgot-password
+func (h *Handler) ForgotPassword(w http.ResponseWriter, r *http.Request) {
+	var req ForgotPasswordRequest
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		response.Error(w, http.StatusBadRequest, "INVALID_BODY", "could not parse request body")
+		return
+	}
+	if err := h.service.ForgotPassword(r.Context(), req); err != nil {
+		response.Error(w, http.StatusBadRequest, "RESET_FAILED", err.Error())
+		return
+	}
+	response.JSON(w, http.StatusOK, map[string]string{"message": "Password updated"})
 }
 
 // GET /auth/profile (protected)
@@ -60,6 +75,7 @@ func (h *Handler) Profile(w http.ResponseWriter, r *http.Request) {
 	response.JSON(w, http.StatusOK, res)
 }
 
+// PUT /auth/profile/name (protected)
 func (h *Handler) UpdateName(w http.ResponseWriter, r *http.Request) {
 	userID, ok := r.Context().Value(middleware.UserIDKey).(string)
 	if !ok || userID == "" {

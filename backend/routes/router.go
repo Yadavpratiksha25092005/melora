@@ -45,7 +45,7 @@ func Setup(db *pgxpool.Pool, jwtSecret string, s3Client *s3.Client) http.Handler
 
 	// wire up modules
 	authRepo := auth.NewRepository(db)
-	authService := auth.NewService(authRepo, jwtSecret, true)
+	authService := auth.NewService(authRepo, jwtSecret)
 	authHandler := auth.NewHandler(authService)
 	songRepo := song.NewRepository(db)
 	songService := song.NewService(songRepo, s3Client)

@@ -9,10 +9,9 @@ import (
 
 func AuthRoutes(r chi.Router, h *auth.Handler, jwtSecret string) {
 	r.Route("/auth", func(r chi.Router) {
-		r.Route("/login", func(r chi.Router) {
-			r.Post("/otp/send", h.SendOTP)
-			r.Post("/otp/verify", h.VerifyOTP)
-		})
+		r.Post("/signup", h.Signup)
+		r.Post("/login", h.Login)
+		r.Post("/forgot-password", h.ForgotPassword)
 
 		r.Group(func(r chi.Router) {
 			r.Use(middleware.Auth(jwtSecret))
